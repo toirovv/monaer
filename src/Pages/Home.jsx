@@ -11,7 +11,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
-// GSAP register
 gsap.registerPlugin(ScrollTrigger)
 
 function Home() {
@@ -24,13 +23,27 @@ function Home() {
     document.body.classList.add('soft-gradient-bg')
     window.scrollTo(0, 0)
 
+    // Foydalanuvchi kirganligini tekshirish
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true'
+    const userData = localStorage.getItem('user')
+
+    // Agar birinchi marta kirayotgan bo'lsa (hech narsa bo'lmasa) - Home da qolish
+    if (!userData && !isLoggedIn) {
+      // Birinchi marta - hech qayerga yo'naltirmaslik
+      console.log('Birinchi marta kirish - Home page')
+    } else if (!isLoggedIn && userData) {
+      // Ro'yxatdan o'tgan lekin kirilmagan bo'lsa - Register ga yuborish
+      navigate('/register')
+      return
+    }
+
+    // Agar kirgan bo'lsa — sahifani yuklaymiz
     const timer = setTimeout(() => {
       setIsLoading(false)
-    }, 1800)
+    }, 1200)
 
-    // Animatsiyalarni faqat kerak bo'lganda ishga tushirish
+    // Animatsiyalarni ishga tushirish
     const animateElements = () => {
-      // Hero animatsiyasi
       gsap.fromTo(
         '.hero-animate',
         { opacity: 0, y: 50 },
@@ -52,7 +65,7 @@ function Home() {
       clearTimeout(animationTimer)
       ScrollTrigger.getAll().forEach((t) => t.kill())
     }
-  }, [])
+  }, [navigate])
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -73,14 +86,14 @@ function Home() {
     autoplay: true,
     autoplaySpeed: 3500,
     arrows: false,
-    dots: true,
+  }
+
+  if (isLoading) {
+    return <LoadingSpinner />
   }
 
   return (
     <div className="min-h-screen">
-      {isLoading && <LoadingSpinner />}
-
-      {/* Asosiy container – endi o‘ng tarafda bo‘sh joy qolmaydi */}
       <div className="mx-auto w-full max-w-screen-xl px-4 sm:px-5 md:px-6 lg:px-8 xl:px-10">
 
         {/* Slider */}
@@ -95,9 +108,8 @@ function Home() {
                   <img
                     src={MonaerImg1}
                     alt={`Slide ${idx + 1}`}
-                    className={`w-full h-auto object-cover rounded-xl md:rounded-2xl transition-opacity duration-500 ${
-                      imageLoaded ? 'opacity-100' : 'opacity-0'
-                    }`}
+                    className={`w-full h-auto object-cover rounded-xl md:rounded-2xl transition-opacity duration-500 ${imageLoaded ? 'opacity-100' : 'opacity-0'
+                      }`}
                     onLoad={() => setImageLoaded(true)}
                   />
                 </div>
@@ -116,7 +128,7 @@ function Home() {
           </p>
         </div>
 
-        {/* 3 ta feature kartasi */}
+        {/* Feature kartalar */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-6 lg:gap-8 mt-10 md:mt-14 max-w-5xl mx-auto">
           {[
             { icon: ShieldCheck, color: 'blue', title: 'Original mahsulotlar', text: 'Sertifikatlangan va tasdiqlangan' },
@@ -136,7 +148,7 @@ function Home() {
           ))}
         </div>
 
-        {/* Qidiruv maydoni */}
+        {/* Qidiruv */}
         <div className="mt-12 md:mt-16 flex flex-col items-center">
           <form onSubmit={handleSearch} className="w-full max-w-xl lg:max-w-2xl">
             <div className="relative">
@@ -157,7 +169,6 @@ function Home() {
           </form>
         </div>
 
-        {/* Mahsulotlar grid */}
         <div className="mt-14 md:mt-20">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-10">
             Mashhur mahsulotlar
@@ -179,14 +190,12 @@ function Home() {
           </div>
         </div>
 
-        {/* Kategoriyalar */}
         <div className="mt-16 md:mt-20 pb-10 md:pb-16">
           <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 md:mb-10">
             Kategoriyalar
           </h2>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {/* Kategoriyalarni shu yerga joylashtiring */}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Home from './Pages/Home'
 import About from './Pages/About'
 import Blog from './Pages/Blog'
@@ -11,8 +11,54 @@ import ProductDetail from './Pages/ProductDetail'
 import Layout from './Components/Layout'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import CategoryPage from './Pages/CategoryPage'
+import Login from './Pages/Login'
+import Register from './Pages/Register'
+import NotFound from './Pages/NotFound'
+
+// Auth context
+export const AuthContext = React.createContext()
+
+function AuthProvider({ children }) {
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(true)
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const isLoggedIn = localStorage.getItem('isLoggedIn')
+      const userData = localStorage.getItem('user')
+      
+      if (isLoggedIn && userData) {
+        setIsAuthenticated(true)
+      }
+      setIsLoading(false)
+    }
+
+    checkAuth()
+
+    // Listen for auth changes
+    const handleStorageChange = () => {
+      checkAuth()
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    window.addEventListener('cartUpdated', handleStorageChange)
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      window.removeEventListener('cartUpdated', handleStorageChange)
+    }
+  }, [])
+
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated, isLoading }}>
+      {children}
+    </AuthContext.Provider>
+  )
+}
 
 function App() {
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true)
+
   useEffect(() => {
     // Update page title dynamically
     const updatePageTitle = () => {
@@ -29,8 +75,14 @@ function App() {
         title = 'Monaer - Biz haqimizda | Avtomobil ehtiyot qismlari';
       } else if (path === '/contact') {
         title = 'Monaer - Aloqa | Avtomobil ehtiyot qismlari';
+      } else if (path === '/login') {
+        title = 'Monaer - Tizimga kirish | Avtomobil ehtiyot qismlari';
+      } else if (path === '/register') {
+        title = 'Monaer - Ro\'yxatdan o\'tish | Avtomobil ehtiyot qismlari';
       } else if (path.includes('/product/')) {
         title = 'Monaer - Mahsulot tafsilotlari | Avtomobil ehtiyot qismlari';
+      } else {
+        title = 'Monaer - 404 | Sahifa topilmadi';
       }
       
       document.title = title;
@@ -44,6 +96,12 @@ function App() {
         description = 'Monaer katalogi. Barcha turdagi avtomobil ehtiyot qismlari, zaxiralar va boshqa mahsulotlar. Qulay narxlar va keng assortiment.';
       } else if (path === '/cart') {
         description = 'Monaer savatchasi. Tanlangan mahsulotlarni ko\'ring va sotib oling. Xavfsiz va qulay to\'lov tizimi.';
+      } else if (path === '/login') {
+        description = 'Monaer tizimga kirish sahifasi. Hisobingizga kiring va to\'liq imkoniyatlardan foydalaning.';
+      } else if (path === '/register') {
+        description = 'Monaer ro\'yxatdan o\'tish sahifasi. Yangi hisob yarating va Monaer imkoniyatlaridan foydalaning.';
+      } else {
+        description = 'Monaer - 404 xatolik. Siz qidirayotgan sahifa mavjud emas. Bosh sahifaga qayting yoki katalogni ko\'ring.';
       }
       
       // Update meta description
@@ -67,10 +125,10 @@ function App() {
       window.removeEventListener('popstate', handleRouteChange);
       window.removeEventListener('pushstate', handleRouteChange);
     };
-  }, []);
+  }, [])
 
   return (
-    <div>
+    <AuthProvider>
       <BrowserRouter>
         <Routes>
           <Route element={<Layout />}>
@@ -85,9 +143,12 @@ function App() {
             <Route path='/product/:id' element={<ProductDetail />} />
             <Route path='/category/:categoryName' element={<CategoryPage />} />
           </Route>
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register />} />
+          <Route path='*' element={<NotFound />} />
         </Routes>
       </BrowserRouter>
-    </div>
+    </AuthProvider>
   )
 }
 

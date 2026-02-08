@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import React, { useEffect, useState, useContext } from 'react'
 import { User, ShoppingCart } from 'lucide-react'
+import { Link, useLocation } from 'react-router-dom'
+import { AuthContext } from '../App'
 
 const CartBadge = () => {
   const [cartCount, setCartCount] = useState(0)
@@ -42,18 +43,18 @@ const CartBadge = () => {
 
 function Header() {
   const location = useLocation()
+  const { isAuthenticated, isLoading } = useContext(AuthContext)
 
   const navItems = [
     { path: '/', label: 'Bosh sahifa', activeColor: 'bg-blue-500' },
     { path: '/catalog', label: 'Katalog', activeColor: 'bg-emerald-500' },
-    { path: '/promotions', label: 'Aksiyalar', activeColor: 'bg-amber-500' },
-    { path: '/contacts', label: 'Aloqa', activeColor: 'bg-purple-500' },
+    { path: '/blog', label: 'Blog', activeColor: 'bg-amber-500' },
+    { path: '/contact', label: 'Aloqa', activeColor: 'bg-purple-500' },
   ]
 
   const renderNavLinks = (isMobile = false) =>
     navItems.map((item) => {
       const isActive = location.pathname === item.path
-
       return (
         <Link
           key={item.path}
@@ -88,6 +89,20 @@ function Header() {
       )
     })
 
+  if (isLoading) {
+    return (
+      <header className="bg-[#1e293b] shadow-lg sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+          <div className="w-12 h-8 bg-gray-700 rounded-lg animate-pulse"></div>
+          <div className="flex gap-4">
+            <div className="w-8 h-8 bg-gray-700 rounded-full animate-pulse"></div>
+            <div className="w-8 h-8 bg-gray-700 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+      </header>
+    )
+  }
+
   return (
     <header className="bg-[#1e293b] shadow-lg sticky top-0 z-50">
       {/* Yuqori qism */}
@@ -96,7 +111,7 @@ function Header() {
           <img
             src="https://static.tildacdn.com/tild3463-3734-4963-a665-653363316531/Frame_2087327802.png"
             alt="Monaer Logo"
-            className="h-8 sm:h-11 rounded-lg hover:scale-105 transition-transform duration-300"
+            className="h-8 outline-none sm:h-11 rounded-lg hover:scale-105 transition-transform duration-300"
           />
         </Link>
 
@@ -106,20 +121,30 @@ function Header() {
         </nav>
 
         {/* Ikonlar */}
-        <div className="flex items-center gap-5 sm:gap-7">
-          <Link to="/profile" className="text-white hover:text-blue-300 transition-colors">
-            <User size={24} />
-          </Link>
+        <div className="flex items-center gap-4 sm:gap-6">
           <Link to="/cart" className="text-white hover:text-blue-300 relative transition-colors">
             <ShoppingCart size={24} />
             <CartBadge />
           </Link>
+          
+          {isAuthenticated ? (
+            <Link to="/profile" className="text-white hover:text-blue-300 transition-colors">
+              <User size={24} />
+            </Link>
+          ) : (
+            <Link 
+              to="/register" 
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm sm:text-base"
+            >
+              Kirish
+            </Link>
+          )}
         </div>
       </div>
 
       {/* Mobil pastki navigatsiya */}
       <nav className="sm:hidden bg-[#1e293b]/95 border-t border-gray-700/60">
-        <div className="flex items-center justify-around px-1 py-1">
+        <div className="w-[320px] p-[10px] gap-[10px] flex items-center justify-around">
           {renderNavLinks(true)}
         </div>
       </nav>
