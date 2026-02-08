@@ -1,337 +1,130 @@
-import React, { useState, useEffect } from 'react'
-
-import Logo from '../assets/icons/logo.jpg'
-
-import MenuProps from './MenuProps'
-
-import { Contact, Home, Info, MessageSquare, ShoppingCart, User, LayoutGrid, Menu, X } from 'lucide-react'
-
+import React, { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { User, ShoppingCart } from 'lucide-react'
 
-import MobileNav from './MobileNav'
-
-
-
-
-const CartBadge = ({ isLoading, showDropdown }) => {
-
+const CartBadge = () => {
   const [cartCount, setCartCount] = useState(0)
 
-
-
   useEffect(() => {
-
     const updateCartCount = () => {
-
       const cart = localStorage.getItem('cart')
-
       if (cart) {
-
-        const items = JSON.parse(cart)
-
-        const count = items.reduce((total, item) => total + item.quantity, 0)
-
-        setCartCount(count)
-
+        try {
+          const items = JSON.parse(cart)
+          const count = items.reduce((total, item) => total + (item.quantity || 0), 0)
+          setCartCount(count)
+        } catch {
+          setCartCount(0)
+        }
       } else {
         setCartCount(0)
       }
     }
+
     updateCartCount()
-    const handleStorageChange = () => {
-      updateCartCount()
-    }
-    window.addEventListener('storage', handleStorageChange)
-    window.addEventListener('cartUpdated', handleStorageChange)
+    window.addEventListener('storage', updateCartCount)
+    window.addEventListener('cartUpdated', updateCartCount)
+
     return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      window.removeEventListener('cartUpdated', handleStorageChange)
+      window.removeEventListener('storage', updateCartCount)
+      window.removeEventListener('cartUpdated', updateCartCount)
     }
   }, [])
 
-  if (cartCount === 0 && !isLoading) {
-    return (
-      <div className="relative">
-        <span className="absolute -top-1 -right-1 bg-gray-400 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
-          0
-        </span>
-      </div>
-    )
-  }
-
-
+  if (cartCount === 0) return null
 
   return (
-
-    <div className="relative">
-      {isLoading && showDropdown && (
-        <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-2"></div>
-            <span className="text-sm text-gray-600">Yuklanmoqda...</span>
-          </div>
-        </div>
-      )}
-      {isLoading && (
-        <div className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-          <div className="animate-spin rounded-full h-3 w-3 border-b border-white"></div>
-        </div>
-      )}
-      {!isLoading && (
-        <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
-
-          {cartCount > 99 ? '99+' : cartCount}
-
-        </span>
-      )}
-    </div>
-
+    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+      {cartCount > 99 ? '99+' : cartCount}
+    </span>
   )
-
 }
-
-
 
 function Header() {
-
   const location = useLocation()
 
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isCartLoading, setIsCartLoading] = useState(false)
-  const [showCartDropdown, setShowCartDropdown] = useState(false)
+  const navItems = [
+    { path: '/', label: 'Bosh sahifa', activeColor: 'bg-blue-500' },
+    { path: '/catalog', label: 'Katalog', activeColor: 'bg-emerald-500' },
+    { path: '/promotions', label: 'Aksiyalar', activeColor: 'bg-amber-500' },
+    { path: '/contacts', label: 'Aloqa', activeColor: 'bg-purple-500' },
+  ]
 
+  const renderNavLinks = (isMobile = false) =>
+    navItems.map((item) => {
+      const isActive = location.pathname === item.path
 
+      return (
+        <Link
+          key={item.path}
+          to={item.path}
+          className={`
+            relative flex items-center justify-center transition-all duration-200
+            ${isMobile 
+              ? 'flex-1 py-3 px-2 text-xs sm:text-sm' 
+              : 'px-5 py-3 text-base'
+            }
+            ${isActive
+              ? 'text-white font-medium'
+              : isMobile
+              ? 'text-gray-400 hover:text-gray-200'
+              : 'text-gray-300 hover:text-white'
+            }
+          `}
+        >
+          {item.label}
 
-  const toggleMobileMenu = () => {
-
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-
-  }
-
-
-
-  const closeMobileMenu = () => {
-
-    setIsMobileMenuOpen(false)
-
-  }
-
-  const handleCartClick = (e) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setIsCartLoading(true)
-    setShowCartDropdown(true)
-    setTimeout(() => {
-      window.location.href = '/cart'
-    }, 800)
-  }
-
-
+          {/* Faqat active holatda pastdan chiziq */}
+          {isActive && (
+            <span 
+              className={`
+                absolute bottom-0 left-1/2 -translate-x-1/2 
+                w-6 h-0.5 rounded-full ${item.activeColor}
+                transition-all duration-300
+              `}
+            />
+          )}
+        </Link>
+      )
+    })
 
   return (
-
-    <>
-
-      <header className='bg-[#1e293b] p-[20px] shadow-lg sticky top-0 z-50 transition-all'>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-          <div className='flex items-center justify-between'>
-
-            <img className=' ml-[7px] rounded-[10px] hover:scale-105 transition-transform duration-300 ios-hardware-accelerated' width={180} src='https://static.tildacdn.com/tild3463-3734-4963-a665-653363316531/Frame_2087327802.png' alt="" />
-
-
-
-
-            <ul className='hidden sm:flex items-center gap-[10px] lg:gap-[20px]'>
-
-
-
-              <Link to={'/'} onClick={closeMobileMenu}>
-
-                <div className={`flex items-center gap-[6px] cursor-pointer px-2 py-1.5 lg:px-4 lg:py-2 rounded-lg transition-all duration-300 ${location.pathname === '/' ? 'bg-black/20 text-white' : 'text-white hover:bg-black/20'
-
-                  }`}>
-
-                  <Home className="hover:text-blue-300 transition-colors duration-300 text-white" size={20} />
-
-                  <span className="hidden sm:inline text-sm lg:text-base">
-
-                    <MenuProps Menu={'Bosh Sahifa'} isActive={location.pathname === '/'} />
-
-                  </span>
-
-                </div>
-
-              </Link>
-
-              <Link to={'about'} onClick={closeMobileMenu}>
-
-                <div className={`flex items-center gap-[6px] cursor-pointer px-2 py-1.5 lg:px-4 lg:py-2 rounded-lg transition-all duration-300 ${location.pathname === '/about' ? 'bg-black/20 text-white' : 'text-white hover:bg-black/20'
-
-                  }`}>
-
-                  <Info className="hover:text-blue-300 transition-colors duration-300 text-white" size={20} />
-
-                  <span className="hidden sm:inline text-sm lg:text-base">
-
-                    <MenuProps Menu={'Biz Haqimizda'} isActive={location.pathname === '/about'} />
-
-                  </span>
-
-                </div>
-
-              </Link>
-
-              <Link to={'blog'} onClick={closeMobileMenu}>
-
-                <div className={`flex items-center gap-[6px] px-2 py-1.5 lg:px-4 lg:py-2 cursor-pointer rounded-lg transition-all duration-300 ${location.pathname === '/blog' ? 'bg-black/20 text-white' : 'text-white hover:bg-black/20'
-
-                  }`}>
-
-                  <MessageSquare className="hover:text-blue-300 transition-colors duration-300 text-white" size={20} />
-
-                  <span className="hidden sm:inline text-sm lg:text-base">
-
-                    <MenuProps Menu={'Blog'} isActive={location.pathname === '/blog'} />
-
-                  </span>
-
-                </div>
-
-              </Link>
-
-              <Link to={'catalog'} onClick={closeMobileMenu}>
-
-                <div className={`flex items-center gap-[6px] px-2 py-1.5 lg:px-4 lg:py-2 cursor-pointer rounded-lg transition-all duration-300 ${location.pathname === '/catalog' ? 'bg-black/20 text-white' : 'text-white hover:bg-black/20'
-
-                  }`}>
-
-                  <LayoutGrid className="hover:text-blue-300 transition-colors duration-300 text-white" size={20} />
-
-                  <span className="hidden sm:inline text-sm lg:text-base">
-
-                    <MenuProps Menu={'Katalog'} isActive={location.pathname === '/catalog'} />
-
-                  </span>
-
-                </div>
-
-              </Link>
-
-              <Link to={'contact'} onClick={closeMobileMenu}>
-
-                <div className={`flex items-center gap-[6px] px-2 py-1.5 lg:px-4 lg:py-2 cursor-pointer rounded-lg transition-all duration-300 ${location.pathname === '/contact' ? 'bg-black/20 text-white' : 'text-white hover:bg-black/20'
-
-                  }`}>
-
-                  <Contact className="hover:text-blue-300 transition-colors duration-300 text-white" size={20} />
-
-                  <span className="hidden sm:inline text-sm lg:text-base">
-
-                    <MenuProps Menu={'Kontaktlar'} isActive={location.pathname === '/contact'} />
-
-                  </span>
-
-                </div>
-
-              </Link>
-
-            </ul>
-
-
-
-            {/* Desktop Right Side */}
-
-            <div className='hidden sm:flex text-white items-center gap-[10px] lg:gap-[20px] mr-[15px] lg:mr-[20px]'>
-
-
-
-              <Link to={'/profile'} onClick={closeMobileMenu}>
-
-                <div className={`flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-lg hover:bg-black/20 transition-colors duration-300 cursor-pointer ${location.pathname === '/profile' ? 'bg-black/20' : ''}`}>
-
-                  <User className="hover:text-blue-300 transition-colors duration-300 text-white" size={20} />
-
-                </div>
-
-              </Link>
-
-              <div onClick={handleCartClick} className={`flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-lg hover:bg-black/20 transition-colors duration-300 cursor-pointer relative ${location.pathname === '/cart' ? 'bg-black/20' : ''}`}>
-
-                  <ShoppingCart className="hover:text-blue-300 transition-colors duration-300 text-white" size={20} />
-
-                  <CartBadge isLoading={isCartLoading} showDropdown={showCartDropdown} />
-
-                </div>
-
-            </div>
-
-
-
-            {/* Mobile Menu Button */}
-
-            <div className='sm:hidden flex items-center gap-[10px] mr-[15px]'>
-
-              <Link to={'/profile'} onClick={closeMobileMenu}>
-
-                <div className={`flex items-center justify-center w-10 h-10 rounded-lg hover:bg-black/20 transition-colors duration-300 cursor-pointer ${location.pathname === '/profile' ? 'bg-black/20' : ''}`}>
-
-                  <User className="hover:text-blue-300 transition-colors duration-300 text-white" size={20} />
-
-                </div>
-
-              </Link>
-
-              <div onClick={handleCartClick} className={`flex items-center justify-center w-10 h-10 rounded-lg hover:bg-black/20 transition-colors duration-300 cursor-pointer relative ${location.pathname === '/cart' ? 'bg-black/20' : ''}`}>
-
-                  <ShoppingCart className="hover:text-blue-300 transition-colors duration-300 text-white" size={20} />
-
-                  <CartBadge isLoading={isCartLoading} showDropdown={showCartDropdown} />
-
-                </div>
-
-              <button
-
-                onClick={toggleMobileMenu}
-
-                className='flex items-center justify-center w-10 h-10 rounded-lg hover:bg-black/20 transition-colors duration-300 cursor-pointer'
-
-              >
-
-                {isMobileMenuOpen ? (
-
-                  <X className="text-white hover:text-blue-300 transition-colors duration-300" size={20} />
-
-                ) : (
-
-                  <Menu className="text-white hover:text-blue-300 transition-colors duration-300" size={20} />
-
-                )}
-
-              </button>
-
-            </div>
-
-          </div>
-
+    <header className="bg-[#1e293b] shadow-lg sticky top-0 z-50">
+      {/* Yuqori qism */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+        <Link to="/">
+          <img
+            src="https://static.tildacdn.com/tild3463-3734-4963-a665-653363316531/Frame_2087327802.png"
+            alt="Monaer Logo"
+            className="h-8 sm:h-11 rounded-lg hover:scale-105 transition-transform duration-300"
+          />
+        </Link>
+
+        {/* Desktop navigatsiya */}
+        <nav className="hidden sm:flex flex-1 justify-center gap-x-4 md:gap-x-8 lg:gap-x-12">
+          {renderNavLinks()}
+        </nav>
+
+        {/* Ikonlar */}
+        <div className="flex items-center gap-5 sm:gap-7">
+          <Link to="/profile" className="text-white hover:text-blue-300 transition-colors">
+            <User size={24} />
+          </Link>
+          <Link to="/cart" className="text-white hover:text-blue-300 relative transition-colors">
+            <ShoppingCart size={24} />
+            <CartBadge />
+          </Link>
         </div>
+      </div>
 
-      </header>
-
-
-
-      {/* Mobile Navigation Component */}
-
-      <MobileNav isOpen={isMobileMenuOpen} onClose={closeMobileMenu} />
-
-    </>
-
+      {/* Mobil pastki navigatsiya */}
+      <nav className="sm:hidden bg-[#1e293b]/95 border-t border-gray-700/60">
+        <div className="flex items-center justify-around px-1 py-1">
+          {renderNavLinks(true)}
+        </div>
+      </nav>
+    </header>
   )
-
 }
 
-
-
 export default Header
-

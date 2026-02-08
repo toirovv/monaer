@@ -1,165 +1,328 @@
 import React, { useState, useEffect } from "react";
+
 import { Star, ShoppingCart, Plus, Minus } from "lucide-react";
+
 import { useNavigate } from "react-router-dom";
+
 import { gsap } from "gsap";
 
+
+
 function ProductCard({ product }) {
+
     const navigate = useNavigate();
+
     const [cartQuantity, setCartQuantity] = useState(0);
+
     const cardRef = React.useRef(null);
 
+
+
     useEffect(() => {
+
         // Load cart quantity from localStorage
+
         const loadCartQuantity = () => {
+
             const cart = localStorage.getItem('cart');
+
             if (cart) {
+
                 const items = JSON.parse(cart);
+
                 const existingItem = items.find(item => item.id === product.id);
+
                 setCartQuantity(existingItem ? existingItem.quantity : 0);
+
             }
+
         };
+
+
 
         loadCartQuantity();
 
+
+
         // Listen for cart updates
+
         const handleCartUpdate = () => {
+
             loadCartQuantity();
+
         };
+
+
 
         window.addEventListener('cartUpdated', handleCartUpdate);
+
         window.addEventListener('storage', handleCartUpdate);
 
+
+
         return () => {
+
             window.removeEventListener('cartUpdated', handleCartUpdate);
+
             window.removeEventListener('storage', handleCartUpdate);
+
         };
+
     }, [product.id]);
 
+
+
     React.useEffect(() => {
+
         // Simple fade-in animation without complex effects
+
         const animateCard = () => {
+
             try {
+
                 if (cardRef.current) {
+
                     gsap.fromTo(cardRef.current, 
+
                         {
+
                             opacity: 0,
+
                             y: 20
+
                         },
+
                         {
+
                             opacity: 1,
+
                             y: 0,
+
                             duration: 0.3,
+
                             delay: Math.random() * 0.1
+
                         }
+
                     );
+
                 }
+
             } catch (error) {
+
                 console.error('GSAP animation error:', error);
+
             }
+
         };
 
+
+
         // Delay animation to ensure DOM is ready
+
         const timer = setTimeout(animateCard, 50);
+
         
+
         return () => clearTimeout(timer);
+
     }, []);
 
+
+
     const handleCardClick = () => {
+
         navigate(`/product/${product.id}`);
+
     };
+
+
 
     const updateCart = (newQuantity) => {
+
         if (newQuantity < 0) return;
 
+
+
         try {
+
             const cart = localStorage.getItem('cart');
+
             let cartItems = cart ? JSON.parse(cart) : [];
+
             
+
             console.log('Current cart before update:', cartItems);
+
             console.log('Product being added:', product);
+
             console.log('New quantity:', newQuantity);
 
+
+
             if (newQuantity === 0) {
+
                 // Remove from cart
+
                 cartItems = cartItems.filter(item => item.id !== product.id);
+
             } else {
+
                 // Add or update in cart
+
                 const existingItemIndex = cartItems.findIndex(item => item.id === product.id);
+
                 
+
                 if (existingItemIndex >= 0) {
+
                     cartItems[existingItemIndex].quantity = newQuantity;
+
                 } else {
+
                     cartItems.push({
+
                         id: product.id,
+
                         name: product.name,
+
                         price: product.price,
+
                         oldPrice: product.oldPrice,
+
                         discount: product.discount,
+
                         image: product.image,
+
                         category: product.category,
+
                         compatibility: product.compatibility,
+
                         quantity: newQuantity
+
                     });
+
                 }
+
             }
+
+
 
             console.log('Cart after update:', cartItems);
+
             localStorage.setItem('cart', JSON.stringify(cartItems));
+
             
+
             // Verify it was saved
+
             const savedCart = localStorage.getItem('cart');
+
             console.log('Saved cart verification:', savedCart);
+
             
+
             setCartQuantity(newQuantity);
 
+
+
             // Trigger custom event to notify other components
+
             window.dispatchEvent(new Event('cartUpdated'));
+
         } catch (error) {
+
             console.error('Error updating cart:', error);
+
         }
+
     };
+
+
 
     const handleAddToCart = (e) => {
+
         e.stopPropagation();
+
         
+
         // Simple button press animation
+
         try {
+
             gsap.to(e.target, {
+
                 scale: 0.95,
+
                 duration: 0.1,
+
                 yoyo: true,
+
                 repeat: 1
+
             });
+
         } catch (error) {
+
             console.error('GSAP animation error:', error);
+
         }
 
+
+
         updateCart(cartQuantity + 1);
+
     };
+
+
 
     const handleIncreaseQuantity = (e) => {
+
         e.stopPropagation();
+
         updateCart(cartQuantity + 1);
+
     };
+
+
 
     const handleDecreaseQuantity = (e) => {
+
         e.stopPropagation();
+
         updateCart(cartQuantity - 1);
+
     };
 
+
+
     const handleCardHover = (isHovering) => {
+
         try {
+
             if (cardRef.current) {
+
                 gsap.to(cardRef.current, {
+
                     y: isHovering ? -4 : 0,
+
                     duration: 0.2,
+
                     ease: "power2.out"
+
                 });
+
             }
+
         } catch (error) {
+
             console.error('GSAP animation error:', error);
+
         }
+
     };
+
+
 
     return (
         <div
@@ -169,7 +332,7 @@ function ProductCard({ product }) {
             onMouseLeave={() => handleCardHover(false)}
             className="group bg-white border border-gray-200 rounded-xl overflow-hidden 
                      hover:border-blue-300 hover:shadow-xl transition-all duration-300 
-                     cursor-pointer flex flex-col h-auto sm:h-[440px] lg:h-[470px]"
+                     cursor-pointer flex flex-col h-auto sm:h-[400px] lg:h-[430px]"
         >
             <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 p-4 flex items-center justify-center h-40">
                 {!product.available && (
@@ -187,47 +350,20 @@ function ProductCard({ product }) {
                     }`}
                 />
             </div>
-            
-            {/* Product details */}
             <div className="flex-1 p-4 space-y-2 flex flex-col">
-                {/* Product name and code */}
                 <div>
                     <h3 className="text-gray-900 font-bold text-base line-clamp-2 mb-1">
                         {product.name}
                     </h3>
                     <span className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded">
-                        KOD: MP{product.id}
+                        KOD: {product.id}
                     </span>
                 </div>
-
-                {/* Rating */}
-                <div className="flex items-center gap-2">
-                    <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                            <Star
-                                key={i}  
-                                
-                                size={12}
-                                className={i < Math.floor(product.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}
-                            />
-                        ))}
-                    </div>
-                    <span className="text-sm text-gray-600 font-medium">
-                        {product.rating}``
-                    </span>
-                    <span className="text-xs text-gray-500">
-                        ({Math.floor(Math.random() * 50) + 10})
-                    </span>
-                </div>
-
-                {/* Description */}
                 <div className="flex-1">
                     <p className="text-sm text-gray-600 leading-relaxed line-clamp-2">
                         {product.description}
                     </p>
                 </div>
-
-                {/* Price section */}
                 <div className="border-t border-gray-200 pt-2">
                     <div className="flex items-center justify-between mb-2">
                         <div>
@@ -246,10 +382,7 @@ function ProductCard({ product }) {
                             )}
                         </div>
                     </div>
-
-                    {/* Action button */}
                     {cartQuantity > 0 ? (
-                        /* Quantity controls */
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={handleDecreaseQuantity}
@@ -268,7 +401,6 @@ function ProductCard({ product }) {
                             </button>
                         </div>
                     ) : (
-                        /* Add to cart button */
                         <button
                             onClick={handleAddToCart}
                             disabled={!product.available}
@@ -286,6 +418,10 @@ function ProductCard({ product }) {
             </div>
         </div>
     );
+
 }
 
+
+
 export default ProductCard;
+
