@@ -67,7 +67,7 @@ function Header() {
   const navItems = [
     { path: '/', label: 'Bosh sahifa', activeColor: 'bg-blue-500' },
     { path: '/catalog', label: 'Katalog', activeColor: 'bg-emerald-500' },
-    { path: '/blog', label: 'Blog', activeColor: 'bg-amber-500' },
+    { path: '/about', label: 'Haqimizda', activeColor: 'bg-amber-500' },
     { path: '/contact', label: 'Aloqa', activeColor: 'bg-purple-500' },
   ]
 
@@ -81,7 +81,7 @@ function Header() {
           className={`
             relative flex items-center justify-center transition-all duration-200
             ${isMobile 
-              ? 'flex-1 py-3 px-2 text-xs sm:text-sm' 
+              ? 'flex-1 py-3 px-2 text-[11px] sm:text-sm' 
               : 'px-5 py-3 text-base'
             }
             ${isActive
@@ -170,7 +170,7 @@ function Header() {
 
       {/* Mobil pastki navigatsiya */}
       <nav className="sm:hidden bg-[#1e293b]/95 border-t border-gray-700/60">
-        <div className="w-[320px] p-[10px] gap-[10px] flex items-center justify-around">
+        <div className="w-[350px] p-[10px] gap-[10px] flex items-center justify-around">
           {renderNavLinks(true)}
         </div>
       </nav>

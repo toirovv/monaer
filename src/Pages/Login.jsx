@@ -193,14 +193,16 @@ function Login() {
               alt="Monaer Logo"
               className="h-12 mx-auto mb-4 rounded-lg"
             />
-            <h1 className="text-2xl font-bold text-gray-900">Tizimga kirish</h1>
+            <h1 className="text-2xl font-bold text-gray-900">
+              Tizimga kirish
+            </h1>
             <p className="text-gray-600 mt-2">
               Hisobingizga kirish uchun ma'lumotlarni kiriting
             </p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Phone */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Telefon raqam</label>
@@ -252,7 +254,7 @@ function Login() {
 
             {/* General Error */}
             {errors.general && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
                 {errors.general}
               </div>
             )}

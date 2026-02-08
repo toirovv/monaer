@@ -13,15 +13,32 @@ function About() {
   useEffect(() => {
     // Simple instant scroll
     window.scrollTo(0, 0);
-  }, []);
+    
+    // Handle ESC key to close modal
+    const handleEscKey = (e) => {
+      if (e.key === 'Escape' && isModalOpen) {
+        closeImageModal();
+      }
+    };
+    
+    document.addEventListener('keydown', handleEscKey);
+    
+    return () => {
+      document.removeEventListener('keydown', handleEscKey);
+    };
+  }, [isModalOpen]);
 
   const openImageModal = (imageSrc, alt) => {
     setSelectedImage({ src: imageSrc, alt: alt });
     setIsModalOpen(true);
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
   };
 
   const closeImageModal = () => {
     setIsModalOpen(false);
+    // Restore body scroll
+    document.body.style.overflow = 'unset';
     setTimeout(() => {
       setSelectedImage(null);
     }, 300); // Wait for transition to complete
@@ -260,17 +277,21 @@ function About() {
       {/* IMAGE MODAL */}
       {(selectedImage || isModalOpen) && (
         <div
-          className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${isModalOpen ? 'bg-black bg-opacity-90' : 'bg-black bg-opacity-0'
-            }`}
+          className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
+            isModalOpen ? 'bg-black bg-opacity-90' : 'bg-black bg-opacity-0'
+          }`}
           onClick={closeImageModal}
         >
           <div
-            className={`relative max-w-6xl max-h-full transform transition-all duration-300 ${isModalOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-              }`}
+            className={`relative max-w-6xl max-h-full transform transition-all duration-300 ${
+              isModalOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
+            }`}
+            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking on image
           >
             <button
               onClick={closeImageModal}
-              className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white hover:text-gray-300 transition-colors duration-200 bg-black bg-opacity-50 rounded-full p-1.5 sm:p-2 z-10"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 text-white hover:text-gray-300 transition-colors duration-200 bg-black bg-opacity-50 rounded-full p-1.5 sm:p-2 z-10 hover:bg-opacity-70"
+              title="Yopish"
             >
               <X size={16} sm:size={20} lg:size={24} />
             </button>
@@ -279,9 +300,9 @@ function About() {
                 <img
                   src={selectedImage.src}
                   alt={selectedImage.alt}
-                  className="max-w-full max-h-full object-contain rounded-lg"
+                  className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
                 />
-                <div className="absolute bottom-4 left-4 right-4 text-center">
+                <div className="absolute bottom-4 left-4 right-4 text-center bg-black bg-opacity-70 rounded-lg px-4 py-2">
                   <p className="text-white text-lg font-medium">{selectedImage.alt}</p>
                 </div>
               </>
