@@ -1,7 +1,7 @@
 import React from "react";
 import Logo from "../assets/icons/logo.jpg";
 import { Facebook, Twitter, Instagram, Youtube } from "lucide-react";
-import { siGoogleplay, siAppstore } from "simple-icons/icons";
+import { siGoogleplay, siAppstore } from "simple-icons";
 
 // Fix for missing payment images
 const PaymentIcons = () => {

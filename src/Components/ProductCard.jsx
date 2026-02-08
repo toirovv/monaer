@@ -36,23 +36,20 @@ function ProductCard({ product }) {
     }, [product.id]);
 
     React.useEffect(() => {
-        // GSAP animation on mount with safety checks
+        // Simple fade-in animation without complex effects
         const animateCard = () => {
             try {
                 if (cardRef.current) {
                     gsap.fromTo(cardRef.current, 
                         {
                             opacity: 0,
-                            y: 30,
-                            scale: 0.9
+                            y: 20
                         },
                         {
                             opacity: 1,
                             y: 0,
-                            scale: 1,
-                            duration: 0.6,
-                            ease: "power2.out",
-                            delay: Math.random() * 0.3
+                            duration: 0.3,
+                            delay: Math.random() * 0.1
                         }
                     );
                 }
@@ -74,51 +71,64 @@ function ProductCard({ product }) {
     const updateCart = (newQuantity) => {
         if (newQuantity < 0) return;
 
-        const cart = localStorage.getItem('cart');
-        let cartItems = cart ? JSON.parse(cart) : [];
-
-        if (newQuantity === 0) {
-            // Remove from cart
-            cartItems = cartItems.filter(item => item.id !== product.id);
-        } else {
-            // Add or update in cart
-            const existingItemIndex = cartItems.findIndex(item => item.id === product.id);
+        try {
+            const cart = localStorage.getItem('cart');
+            let cartItems = cart ? JSON.parse(cart) : [];
             
-            if (existingItemIndex >= 0) {
-                cartItems[existingItemIndex].quantity = newQuantity;
+            console.log('Current cart before update:', cartItems);
+            console.log('Product being added:', product);
+            console.log('New quantity:', newQuantity);
+
+            if (newQuantity === 0) {
+                // Remove from cart
+                cartItems = cartItems.filter(item => item.id !== product.id);
             } else {
-                cartItems.push({
-                    id: product.id,
-                    name: product.name,
-                    price: product.price,
-                    oldPrice: product.oldPrice,
-                    discount: product.discount,
-                    image: product.image,
-                    category: product.category,
-                    compatibility: product.compatibility,
-                    quantity: newQuantity
-                });
+                // Add or update in cart
+                const existingItemIndex = cartItems.findIndex(item => item.id === product.id);
+                
+                if (existingItemIndex >= 0) {
+                    cartItems[existingItemIndex].quantity = newQuantity;
+                } else {
+                    cartItems.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        oldPrice: product.oldPrice,
+                        discount: product.discount,
+                        image: product.image,
+                        category: product.category,
+                        compatibility: product.compatibility,
+                        quantity: newQuantity
+                    });
+                }
             }
+
+            console.log('Cart after update:', cartItems);
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            
+            // Verify it was saved
+            const savedCart = localStorage.getItem('cart');
+            console.log('Saved cart verification:', savedCart);
+            
+            setCartQuantity(newQuantity);
+
+            // Trigger custom event to notify other components
+            window.dispatchEvent(new Event('cartUpdated'));
+        } catch (error) {
+            console.error('Error updating cart:', error);
         }
-
-        localStorage.setItem('cart', JSON.stringify(cartItems));
-        setCartQuantity(newQuantity);
-
-        // Trigger custom event to notify other components
-        window.dispatchEvent(new Event('cartUpdated'));
     };
 
     const handleAddToCart = (e) => {
         e.stopPropagation();
         
-        // Button animation with safety check
+        // Simple button press animation
         try {
             gsap.to(e.target, {
                 scale: 0.95,
                 duration: 0.1,
                 yoyo: true,
-                repeat: 1,
-                ease: "power2.inOut"
+                repeat: 1
             });
         } catch (error) {
             console.error('GSAP animation error:', error);
@@ -141,9 +151,8 @@ function ProductCard({ product }) {
         try {
             if (cardRef.current) {
                 gsap.to(cardRef.current, {
-                    y: isHovering ? -8 : 0,
-                    scale: isHovering ? 1.02 : 1,
-                    duration: 0.3,
+                    y: isHovering ? -4 : 0,
+                    duration: 0.2,
                     ease: "power2.out"
                 });
             }

@@ -5,22 +5,66 @@ import { Link } from 'react-router-dom'
 function Cart() {
   const [cartItems, setCartItems] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const [showCheckout, setShowCheckout] = useState(false)
 
   useEffect(() => {
     // Load cart items from localStorage
-    const savedCart = localStorage.getItem('cart')
-    if (savedCart) {
-      setCartItems(JSON.parse(savedCart))
+    const loadCartItems = () => {
+      try {
+        const savedCart = localStorage.getItem('cart')
+        console.log('Loading cart from localStorage:', savedCart); // Debug
+        
+        if (savedCart) {
+          const items = JSON.parse(savedCart)
+          console.log('Parsed cart items:', items); // Debug
+          setCartItems(items)
+          setShowCheckout(items.length > 0)
+        } else {
+          console.log('No cart found in localStorage'); // Debug
+          setCartItems([])
+          setShowCheckout(false)
+        }
+      } catch (error) {
+        console.error('Error loading cart:', error);
+        setCartItems([]);
+        setShowCheckout(false);
+      }
     }
+
+    loadCartItems()
+    
+    // Listen for cart updates
+    const handleCartUpdate = () => {
+      console.log('Cart update event received');
+      loadCartItems()
+    }
+
+    window.addEventListener('cartUpdated', handleCartUpdate)
+    window.addEventListener('storage', handleCartUpdate)
+    
+    // Also refresh on focus to catch any localStorage changes
+    const handleFocus = () => {
+      console.log('Window focus event, reloading cart');
+      loadCartItems()
+    }
+    
+    window.addEventListener('focus', handleFocus)
     
     // Simulate loading
     const timer = setTimeout(() => setIsLoading(false), 500)
-    return () => clearTimeout(timer)
+    
+    return () => {
+      window.removeEventListener('cartUpdated', handleCartUpdate)
+      window.removeEventListener('storage', handleCartUpdate)
+      window.removeEventListener('focus', handleFocus)
+      clearTimeout(timer)
+    }
   }, [])
 
   useEffect(() => {
     // Save cart to localStorage whenever it changes
     localStorage.setItem('cart', JSON.stringify(cartItems))
+    setShowCheckout(cartItems.length > 0)
   }, [cartItems])
 
   const updateQuantity = (id, newQuantity) => {
@@ -250,85 +294,90 @@ function Cart() {
                   </div>
                 </div>
 
-                <button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                <button 
+                  onClick={() => setShowCheckout(true)}
+                  className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                >
                   Rasmiylashtirish
                 </button>
 
-                {/* Checkout Form */}
-                <div className="mt-6 space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ism
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="Ismingizni kiriting"
-                    />
+                {/* Checkout Form - Only show when showCheckout is true */}
+                {showCheckout && (
+                  <div className="mt-6 space-y-4 animate-fadeIn">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Ism
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Ismingizni kiriting"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Telefon
+                      </label>
+                      <input
+                        type="tel"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="+998 XX XXX XX XX"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Manzil
+                      </label>
+                      <textarea
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        rows="3"
+                        placeholder="To'liq manzilingizni kiriting"
+                      ></textarea>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Yetkazib berish usuli
+                      </label>
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>Kuryer (1-3 kun)</option>
+                        <option>Olib ketish (Sergeli)</option>
+                        <option>Express yetkazib berish</option>
+                      </select>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        To'lov usuli
+                      </label>
+                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option>Naqd pul</option>
+                        <option>Click</option>
+                        <option>Payme</option>
+                        <option>Uzum</option>
+                      </select>
+                    </div>
+                    
+                    <div className="flex items-start gap-2">
+                      <input
+                        type="checkbox"
+                        className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                      />
+                      <label className="text-sm text-gray-600">
+                        Men shartlarni qabul qilaman va buyurtmani rasmiylashtirishga roziman
+                      </label>
+                    </div>
+                    
+                    <button
+                      onClick={handleCheckout}
+                      className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors font-medium"
+                    >
+                      Buyurtmani Rasmiylashtirish
+                    </button>
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Telefon
-                    </label>
-                    <input
-                      type="tel"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      placeholder="+998 XX XXX XX XX"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Manzil
-                    </label>
-                    <textarea
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      rows="3"
-                      placeholder="To'liq manzilingizni kiriting"
-                    ></textarea>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Yetkazib berish usuli
-                    </label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option>Kuryer (1-3 kun)</option>
-                      <option>Olib ketish (Sergeli)</option>
-                      <option>Express yetkazib berish</option>
-                    </select>
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      To'lov usuli
-                    </label>
-                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                      <option>Naqd pul</option>
-                      <option>Click</option>
-                      <option>Payme</option>
-                      <option>Uzum</option>
-                    </select>
-                  </div>
-                  
-                  <div className="flex items-start gap-2">
-                    <input
-                      type="checkbox"
-                      className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <label className="text-sm text-gray-600">
-                      Men shartlarni qabul qilaman va buyurtmani rasmiylashtirishga roziman
-                    </label>
-                  </div>
-                  
-                  <button
-                    onClick={handleCheckout}
-                    className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors font-medium"
-                  >
-                    Buyurtmani Rasmiylashtirish
-                  </button>
-                </div>
+                )}
 
                 <Link 
                   to="/catalog"

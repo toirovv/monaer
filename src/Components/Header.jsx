@@ -13,7 +13,7 @@ import MobileNav from './MobileNav'
 
 
 
-const CartBadge = () => {
+const CartBadge = ({ isLoading, showDropdown }) => {
 
   const [cartCount, setCartCount] = useState(0)
 
@@ -33,6 +33,8 @@ const CartBadge = () => {
 
         setCartCount(count)
 
+      } else {
+        setCartCount(0)
       }
     }
     updateCartCount()
@@ -47,17 +49,42 @@ const CartBadge = () => {
     }
   }, [])
 
-  if (cartCount === 0) return null
+  if (cartCount === 0 && !isLoading) {
+    return (
+      <div className="relative">
+        <span className="absolute -top-1 -right-1 bg-gray-400 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+          0
+        </span>
+      </div>
+    )
+  }
 
 
 
   return (
 
-    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+    <div className="relative">
+      {isLoading && showDropdown && (
+        <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 p-4">
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mr-2"></div>
+            <span className="text-sm text-gray-600">Yuklanmoqda...</span>
+          </div>
+        </div>
+      )}
+      {isLoading && (
+        <div className="absolute -top-1 -right-1 bg-blue-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+          <div className="animate-spin rounded-full h-3 w-3 border-b border-white"></div>
+        </div>
+      )}
+      {!isLoading && (
+        <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
 
-      {cartCount > 99 ? '99+' : cartCount}
+          {cartCount > 99 ? '99+' : cartCount}
 
-    </span>
+        </span>
+      )}
+    </div>
 
   )
 
@@ -70,6 +97,8 @@ function Header() {
   const location = useLocation()
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isCartLoading, setIsCartLoading] = useState(false)
+  const [showCartDropdown, setShowCartDropdown] = useState(false)
 
 
 
@@ -85,6 +114,16 @@ function Header() {
 
     setIsMobileMenuOpen(false)
 
+  }
+
+  const handleCartClick = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsCartLoading(true)
+    setShowCartDropdown(true)
+    setTimeout(() => {
+      window.location.href = '/cart'
+    }, 800)
   }
 
 
@@ -218,17 +257,13 @@ function Header() {
 
               </Link>
 
-              <Link to={'/cart'} onClick={closeMobileMenu}>
-
-                <div className={`flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-lg hover:bg-black/20 transition-colors duration-300 cursor-pointer relative ${location.pathname === '/cart' ? 'bg-black/20' : ''}`}>
+              <div onClick={handleCartClick} className={`flex items-center justify-center w-10 h-10 lg:w-12 lg:h-12 rounded-lg hover:bg-black/20 transition-colors duration-300 cursor-pointer relative ${location.pathname === '/cart' ? 'bg-black/20' : ''}`}>
 
                   <ShoppingCart className="hover:text-blue-300 transition-colors duration-300 text-white" size={20} />
 
-                  <CartBadge />
+                  <CartBadge isLoading={isCartLoading} showDropdown={showCartDropdown} />
 
                 </div>
-
-              </Link>
 
             </div>
 
@@ -248,17 +283,13 @@ function Header() {
 
               </Link>
 
-              <Link to={'/cart'} onClick={closeMobileMenu}>
-
-                <div className={`flex items-center justify-center w-10 h-10 rounded-lg hover:bg-black/20 transition-colors duration-300 cursor-pointer relative ${location.pathname === '/cart' ? 'bg-black/20' : ''}`}>
+              <div onClick={handleCartClick} className={`flex items-center justify-center w-10 h-10 rounded-lg hover:bg-black/20 transition-colors duration-300 cursor-pointer relative ${location.pathname === '/cart' ? 'bg-black/20' : ''}`}>
 
                   <ShoppingCart className="hover:text-blue-300 transition-colors duration-300 text-white" size={20} />
 
-                  <CartBadge />
+                  <CartBadge isLoading={isCartLoading} showDropdown={showCartDropdown} />
 
                 </div>
-
-              </Link>
 
               <button
 

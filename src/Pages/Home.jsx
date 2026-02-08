@@ -93,54 +93,21 @@ function Home() {
           );
         });
 
-        // Animate categories with 3D effects
+        // Animate categories with simple fade-in effect
         const categoryCards = document.querySelectorAll('.category-card');
-        categoryCards.forEach((card, index) => {
-          gsap.fromTo(card,
-            {
-              opacity: 0,
-              scale: 0.7,
-              rotationY: 45,
-              z: -100
-            },
-            {
-              opacity: 1,
-              scale: 1,
-              rotationY: 0,
-              z: 0,
-              duration: 1,
-              ease: "back.out(1.7)",
-              delay: index * 0.15,
-              scrollTrigger: {
-                trigger: card,
-                start: "top 90%",
-                end: "bottom 10%",
-                toggleActions: "play none none reverse"
-              }
-            }
-          );
-
-          // Add hover animation for categories
-          card.addEventListener('mouseenter', () => {
-            gsap.to(card, {
-              scale: 1.05,
-              rotationY: 5,
-              z: 20,
-              duration: 0.3,
-              ease: "power2.out"
-            });
-          });
-
-          card.addEventListener('mouseleave', () => {
-            gsap.to(card, {
-              scale: 1,
-              rotationY: 0,
-              z: 0,
-              duration: 0.3,
-              ease: "power2.out"
-            });
-          });
-        });
+        gsap.fromTo(categoryCards,
+          {
+            opacity: 0,
+            y: 20
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.5,
+            stagger: 0.1,
+            delay: 0.2
+          }
+        );
 
         // Enhanced iOS-style animations for feature cards
         const featureCards = document.querySelectorAll('.feature-card');
@@ -487,89 +454,7 @@ function Home() {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-3 lg:gap-4 mt-4 sm:mt-6 sm:mt-0 lg:mt-0 product-grid">
             {products.map((product) => (
-              <div key={product.id} className="bg-white border border-gray-200 rounded-lg sm:rounded-xl overflow-hidden hover:border-monaer-primary hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col h-auto sm:h-[320px] lg:h-[360px] hover:scale-105 product-card card-monaer">
-                {/* Product Image */}
-                <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 p-1 sm:p-2 lg:p-3 flex items-center justify-center h-20 sm:h-24 lg:h-28 flex-shrink-0">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-
-                {/* Product Details */}
-                <div className="flex-1 p-2 sm:p-3 lg:p-4 space-y-1 sm:space-y-2 flex flex-col">
-                  {/* Product Name */}
-                  <div>
-                    <h3 className="text-xs sm:text-sm lg:text-base font-bold text-gray-900 line-clamp-1 mb-1">
-                      {product.name}
-                    </h3>
-                    <span className="text-xs text-gray-500 font-mono bg-gray-100 px-1 sm:px-2 py-0.5 rounded">
-                      KOD: MP{product.id}
-                    </span>
-                  </div>
-
-                  {/* Rating */}
-                  <div className="flex items-center gap-1">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          width="6"
-                          height="6"
-                          className={i < Math.floor(product.rating) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                        >
-                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                        </svg>
-                      ))}
-                    </div>
-                    <span className="text-xs text-gray-600 font-medium">
-                      {product.rating}
-                    </span>
-                  </div>
-
-                  {/* Description */}
-                  <div className="flex-1">
-                    <p className="text-xs text-gray-600 leading-relaxed line-clamp-1">
-                      {product.description}
-                    </p>
-                  </div>
-
-                  {/* Price Section */}
-                  <div className="border-t border-gray-200 pt-1 sm:pt-2">
-                    <div className="flex items-center justify-between mb-1 sm:mb-2">
-                      <div>
-                        <div className="flex items-center gap-1">
-                          <span className="text-xs sm:text-sm lg:text-base font-bold text-gray-900">
-                            {product.price.toLocaleString()}
-                          </span>
-                          <span className="text-xs text-gray-500">so'm</span>
-                        </div>
-                        {product.oldPrice && (
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs text-gray-400 line-through">
-                              {product.oldPrice.toLocaleString()} so'm
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Add to Cart Button */}
-                    <button
-                      onClick={() => window.location.href = `/product/${product.id}`}
-                      className="w-full px-1 sm:px-2 py-1 sm:py-1.5 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1 cursor-pointer transform hover:scale-105 btn-primary"
-                    >
-                      <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                      </svg>
-                      Savatga
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ProductCard key={product.id} product={product} />
             ))}
           </div>
 
@@ -583,7 +468,7 @@ function Home() {
 
           <div className="relative mt-12 sm:mt-16 flex flex-col lg:flex-row items-center gap-[30px] lg:gap-[50px] justify-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           </div>
-          <div className="max-w-7xl py-8 sm:py-12 lg:py-16 mx-auto px-4 sm:px-6 lg:px-8 animate-section">
+          <div className="max-w-7xl py-8 sm:py-12 lg:py-16 mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-center mb-6 sm:mb-8">Kategoriyalar</h2>
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
               {getCategories().map((category) => (
