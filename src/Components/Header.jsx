@@ -44,6 +44,25 @@ const CartBadge = () => {
 function Header() {
   const location = useLocation()
   const { isAuthenticated, isLoading } = useContext(AuthContext)
+  
+  // Check if user is registered (not just logged in)
+  const [isRegistered, setIsRegistered] = useState(false)
+  
+  useEffect(() => {
+    const checkRegistration = () => {
+      const user = localStorage.getItem('user')
+      setIsRegistered(!!user)
+    }
+    
+    checkRegistration()
+    window.addEventListener('storage', checkRegistration)
+    window.addEventListener('cartUpdated', checkRegistration)
+    
+    return () => {
+      window.removeEventListener('storage', checkRegistration)
+      window.removeEventListener('cartUpdated', checkRegistration)
+    }
+  }, [])
 
   const navItems = [
     { path: '/', label: 'Bosh sahifa', activeColor: 'bg-blue-500' },
@@ -127,9 +146,16 @@ function Header() {
             <CartBadge />
           </Link>
           
-          {isAuthenticated ? (
+          {isAuthenticated && isRegistered ? (
             <Link to="/profile" className="text-white hover:text-blue-300 transition-colors">
               <User size={24} />
+            </Link>
+          ) : isAuthenticated ? (
+            <Link 
+              to="/register" 
+              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm sm:text-base"
+            >
+              Kirish
             </Link>
           ) : (
             <Link 

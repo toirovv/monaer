@@ -112,34 +112,45 @@ function Register() {
     return Object.keys(newErrors).length === 0
   }
 
-  // Backend API orqali Telegram botga xabar yuborish
+  // Frontend tomondan bevosita Telegram botga xabar yuborish
   const sendToTelegram = async (userData) => {
     try {
-      // Development uchun local server, production uchun Vercel API
-      const apiUrl = process.env.NODE_ENV === 'development' 
-        ? 'http://localhost:5000/api/send-message'
-        : '/api/send-message'
+      const BOT_TOKEN = '8532460020:AAFaC4WcQj51vigfsfU8Vx5lmkNPA0TJivI'
+      const CHAT_ID = '5165340806'
 
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fullName: userData.fullName,
-          phone: userData.phone
-        })
-      })
+      // Format message
+      const message = `
+🆕 Yangi foydalanuvchi ro'yxatdan o'tdi!
+
+👤 Ism: ${userData.fullName}
+📱 Telefon: ${userData.phone}
+⏰ Vaqt: ${new Date().toLocaleString('uz-UZ', {
+        timeZone: 'Asia/Tashkent'
+      })}
+      `.trim()
+
+      const response = await fetch(
+        `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message,
+            parse_mode: 'HTML'
+          })
+        }
+      )
 
       const data = await response.json()
 
-      if (!data.success) {
-        throw new Error(data.message || 'Xabar yuborishda xatolik')
+      if (!data.ok) {
+        throw new Error(data.description || 'Telegram botga xabar yuborishda xatolik')
       }
 
-      return data
+      return { success: true, message: 'Xabar muvaffaqiyatli yuborildi' }
     } catch (error) {
-      console.error("Backend API xatolik:", error)
+      console.error("Telegram API xatolik:", error)
       throw error
     }
   }

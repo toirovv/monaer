@@ -16,8 +16,6 @@ function ProductCard({ product }) {
 
     const cardRef = React.useRef(null);
 
-
-
     useEffect(() => {
 
         // Load cart quantity from localStorage
@@ -38,11 +36,7 @@ function ProductCard({ product }) {
 
         };
 
-
-
         loadCartQuantity();
-
-
 
         // Listen for cart updates
 
@@ -52,27 +46,17 @@ function ProductCard({ product }) {
 
         };
 
-
-
         window.addEventListener('cartUpdated', handleCartUpdate);
 
         window.addEventListener('storage', handleCartUpdate);
 
-
-
         return () => {
-
             window.removeEventListener('cartUpdated', handleCartUpdate);
-
             window.removeEventListener('storage', handleCartUpdate);
-
         };
-
     }, [product.id]);
 
-
-
-    React.useEffect(() => {
+    useEffect(() => {
 
         // Simple fade-in animation without complex effects
 
@@ -116,19 +100,13 @@ function ProductCard({ product }) {
 
         };
 
-
-
         // Delay animation to ensure DOM is ready
 
         const timer = setTimeout(animateCard, 50);
 
-        
-
         return () => clearTimeout(timer);
 
     }, []);
-
-
 
     const handleCardClick = () => {
 
@@ -136,13 +114,9 @@ function ProductCard({ product }) {
 
     };
 
-
-
     const updateCart = (newQuantity) => {
 
         if (newQuantity < 0) return;
-
-
 
         try {
 
@@ -157,8 +131,6 @@ function ProductCard({ product }) {
             console.log('Product being added:', product);
 
             console.log('New quantity:', newQuantity);
-
-
 
             if (newQuantity === 0) {
 
@@ -206,8 +178,6 @@ function ProductCard({ product }) {
 
             }
 
-
-
             console.log('Cart after update:', cartItems);
 
             localStorage.setItem('cart', JSON.stringify(cartItems));
@@ -224,8 +194,6 @@ function ProductCard({ product }) {
 
             setCartQuantity(newQuantity);
 
-
-
             // Trigger custom event to notify other components
 
             window.dispatchEvent(new Event('cartUpdated'));
@@ -238,11 +206,25 @@ function ProductCard({ product }) {
 
     };
 
-
-
     const handleAddToCart = (e) => {
 
         e.stopPropagation();
+
+        
+
+        // Check if user is registered
+
+        const user = localStorage.getItem('user');
+
+        if (!user) {
+
+            // Show notification
+
+            alert('Iltimos, avval platformaga ro\'yxatdan o\'ting!');
+
+            return;
+
+        }
 
         
 
@@ -268,13 +250,9 @@ function ProductCard({ product }) {
 
         }
 
-
-
         updateCart(cartQuantity + 1);
 
     };
-
-
 
     const handleIncreaseQuantity = (e) => {
 
@@ -284,8 +262,6 @@ function ProductCard({ product }) {
 
     };
 
-
-
     const handleDecreaseQuantity = (e) => {
 
         e.stopPropagation();
@@ -293,8 +269,6 @@ function ProductCard({ product }) {
         updateCart(cartQuantity - 1);
 
     };
-
-
 
     const handleCardHover = (isHovering) => {
 
@@ -322,106 +296,194 @@ function ProductCard({ product }) {
 
     };
 
-
-
     return (
+
         <div
+
             ref={cardRef}
+
             onClick={handleCardClick}
+
             onMouseEnter={() => handleCardHover(true)}
+
             onMouseLeave={() => handleCardHover(false)}
+
             className="group bg-white border border-gray-200 rounded-xl overflow-hidden 
+
                      hover:border-blue-300 hover:shadow-xl transition-all duration-300 
+
                      cursor-pointer flex flex-col h-auto sm:h-[400px] lg:h-[430px]"
+
         >
+
             <div className="relative bg-gradient-to-br from-gray-50 to-gray-100 p-4 flex items-center justify-center h-40">
+
                 {!product.available && (
+
                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg z-10">
+
                         <span className="bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-sm">
+
                             Yo'q
+
                         </span>
+
                     </div>
+
                 )}
+
                 <img
+
                     src={product.image}
+
                     alt={product.name}
+
                     className={`max-w-full max-h-full object-contain transition-transform duration-300 group-hover:scale-105 ${
+
                         !product.available ? 'opacity-50' : ''
+
                     }`}
+
                 />
+
             </div>
+
             <div className="flex-1 p-4 space-y-2 flex flex-col">
+
                 <div>
+
                     <h3 className="text-gray-900 font-bold text-base line-clamp-2 mb-1">
+
                         {product.name}
+
                     </h3>
+
                     <span className="text-xs text-gray-500 font-mono bg-gray-100 px-2 py-1 rounded">
+
                         KOD: {product.id}
+
                     </span>
+
                 </div>
+
                 <div className="flex-1">
+
                     <p className="text-sm text-gray-600 leading-relaxed line-clamp-2">
+
                         {product.description}
+
                     </p>
+
                 </div>
+
                 <div className="border-t border-gray-200 pt-2">
+
                     <div className="flex items-center justify-between mb-2">
+
                         <div>
+
                             <div className="flex items-center gap-1">
+
                                 <span className="text-lg font-bold text-gray-900">
+
                                     {product.price.toLocaleString()}
+
                                 </span>
+
                                 <span className="text-sm text-gray-500">so'm</span>
+
                             </div>
+
                             {product.oldPrice && (
+
                                 <div className="flex items-center gap-1">
+
                                     <span className="text-sm text-gray-400 line-through">
+
                                         {product.oldPrice.toLocaleString()} so'm
+
                                     </span>
+
                                 </div>
+
                             )}
+
                         </div>
+
                     </div>
+
                     {cartQuantity > 0 ? (
+
                         <div className="flex items-center gap-2">
+
                             <button
+
                                 onClick={handleDecreaseQuantity}
+
                                 className="w-8 h-8 rounded-lg bg-red-100 hover:bg-red-200 text-red-600 flex items-center justify-center transition-all duration-300 transform hover:scale-105"
+
                             >
+
                                 <Minus size={16} />
+
                             </button>
+
                             <span className="flex-1 text-center font-semibold text-gray-900 transition-all duration-300">
+
                                 {cartQuantity}
+
                             </span>
+
                             <button
+
                                 onClick={handleIncreaseQuantity}
+
                                 className="w-8 h-8 rounded-lg bg-green-100 hover:bg-green-200 text-green-600 flex items-center justify-center transition-all duration-300 transform hover:scale-105"
+
                             >
+
                                 <Plus size={16} />
+
                             </button>
+
                         </div>
+
                     ) : (
+
                         <button
+
                             onClick={handleAddToCart}
+
                             disabled={!product.available}
+
                             className={`w-full px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 cursor-pointer transform hover:scale-105 ${
+
                                 product.available 
+
                                     ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+
                                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+
                             }`}
+
                         >
+
                             <ShoppingCart size={14} />
+
                             {product.available ? 'Savatga' : 'Mavjud emas'}
+
                         </button>
+
                     )}
+
                 </div>
+
             </div>
+
         </div>
+
     );
 
 }
 
-
-
 export default ProductCard;
-

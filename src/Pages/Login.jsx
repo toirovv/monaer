@@ -16,30 +16,31 @@ function Login() {
     const { name, value } = e.target
     
     if (name === 'phone') {
-      // Format: (90) 123 32 32
+      // Faqat ruxsat etilgan operator kodlari
+      const allowedCodes = ['90', '93', '98', '99']
       let phoneValue = value.replace(/[^\d]/g, '')
-      
-      // Check if it starts with valid Uzbekistan codes
+
+      // Faqat ruxsat etilgan kod bilan boshlansa davom etadi
       if (phoneValue.length >= 2) {
         const firstTwo = phoneValue.substring(0, 2)
-        const validCodes = ['90', '91', '93', '94', '95', '97', '98', '99']
-        
-        if (!validCodes.includes(firstTwo)) {
-          return // Don't update if invalid code
+        if (!allowedCodes.includes(firstTwo)) {
+          return // ruxsat etilmagan kod — o'zgartirish qo'llanilmaydi
         }
       }
-      
-      // Format the phone number
+
+      // Formatlash: (99) 123 45 67
       if (phoneValue.length === 0) {
         phoneValue = ''
-      } else if (phoneValue.length <= 3) {
+      } else if (phoneValue.length <= 2) {
         phoneValue = '(' + phoneValue
       } else if (phoneValue.length <= 5) {
-        phoneValue = '(' + phoneValue.substring(0, 3) + ') ' + phoneValue.substring(3)
+        phoneValue = '(' + phoneValue.substring(0, 2) + ') ' + phoneValue.substring(2)
       } else if (phoneValue.length <= 7) {
-        phoneValue = '(' + phoneValue.substring(0, 3) + ') ' + phoneValue.substring(3, 5) + ' ' + phoneValue.substring(5)
+        phoneValue = '(' + phoneValue.substring(0, 2) + ') ' + phoneValue.substring(2, 5) + ' ' + phoneValue.substring(5)
+      } else if (phoneValue.length <= 9) {
+        phoneValue = '(' + phoneValue.substring(0, 2) + ') ' + phoneValue.substring(2, 5) + ' ' + phoneValue.substring(5, 7) + ' ' + phoneValue.substring(7)
       } else {
-        phoneValue = '(' + phoneValue.substring(0, 3) + ') ' + phoneValue.substring(3, 5) + ' ' + phoneValue.substring(5, 7)
+        phoneValue = phoneValue.substring(0, 9)
       }
       
       setFormData(prev => ({
@@ -52,48 +53,89 @@ function Login() {
         [name]: value
       }))
     }
-    
-    // Clear error when user starts typing
+
+    // Xatoni tozalash
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }))
+      setErrors(prev => ({ ...prev, [name]: '' }))
     }
   }
 
   const validateForm = () => {
     const newErrors = {}
 
-    if (!formData.phone || formData.phone === '' || formData.phone.length < 9) {
-      newErrors.phone = 'Telefon raqam to\'liq kiriting'
+    // Telefon
+    if (!formData.phone) {
+      newErrors.phone = "Telefon raqam kiritilishi shart"
     } else {
-      // Check if it's valid Uzbekistan number
       const digits = formData.phone.replace(/[^\d]/g, '')
       if (digits.length !== 9) {
-        newErrors.phone = 'Telefon raqam noto\'g\'ri formatda'
+        newErrors.phone = "Telefon raqam to'liq kiritilmagan (9 ta raqam)"
       } else {
-        const firstTwo = digits.substring(0, 2)
-        const validCodes = ['90', '91', '93', '94', '95', '97', '98', '99']
-        if (!validCodes.includes(firstTwo)) {
-          newErrors.phone = "Faqat O'zbekiston telefon raqamlari qabul qilinadi (90, 91, 93, 94, 95, 97, 98, 99)"
+        const code = digits.substring(0, 2)
+        const allowedCodes = ['90', '93', '98', '99']
+        if (!allowedCodes.includes(code)) {
+          newErrors.phone = "Faqat 90, 93, 98, 99 bilan boshlanadigan raqamlar qabul qilinadi"
         }
       }
     }
 
+    // Parol
     if (!formData.password) {
-      newErrors.password = 'Parol maydoni to\'ldirilishi shart'
+      newErrors.password = "Parol kiritilishi shart"
     } else if (formData.password.length !== 6) {
-      newErrors.password = 'Parol 6 ta belgidan iborat bo\'lishi kerak'
+      newErrors.password = "Parol 6 ta belgidan iborat bo'lishi kerak"
     }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
+  // Frontend tomondan bevosita Telegram botga xabar yuborish
+  const sendLoginToTelegram = async (userData) => {
+    try {
+      const BOT_TOKEN = '8532460020:AAFaC4WcQj51vigfsfU8Vx5lmkNPA0TJivI'
+      const CHAT_ID = '5165340806'
+
+      // Format message
+      const message = `
+🔐 Foydalanuvchi tizimga kirdi!
+
+👤 Telefon: ${userData.phone}
+⏰ Vaqt: ${new Date().toLocaleString('uz-UZ', {
+        timeZone: 'Asia/Tashkent'
+      })}
+      `.trim()
+
+      const response = await fetch(
+        `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: message,
+            parse_mode: 'HTML'
+          })
+        }
+      )
+
+      const data = await response.json()
+
+      if (!data.ok) {
+        throw new Error(data.description || 'Telegram botga xabar yuborishda xatolik')
+      }
+
+      return { success: true, message: 'Xabar muvaffaqiyatli yuborildi' }
+    } catch (error) {
+      console.error("Telegram API xatolik:", error)
+      // Login jarayonini to'xtatmaslik uchun xatoni ignore qilamiz
+      return { success: true }
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (!validateForm()) return
 
     setIsLoading(true)
@@ -111,6 +153,10 @@ function Login() {
         if (user.phone === formData.phone && user.password === formData.password) {
           // Store login session
           localStorage.setItem('isLoggedIn', 'true')
+          
+          // Telegramga xabar yuborish
+          await sendLoginToTelegram({ phone: formData.phone })
+          
           navigate('/profile')
         } else {
           setErrors({ general: 'Telefon raqam yoki parol noto\'g\'ri' })
@@ -147,117 +193,91 @@ function Login() {
               alt="Monaer Logo"
               className="h-12 mx-auto mb-4 rounded-lg"
             />
-            <h1 className="text-2xl font-bold text-gray-900">
-              Tizimga kirish
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-900">Tizimga kirish</h1>
             <p className="text-gray-600 mt-2">
-              Hisobingizga kirish uchun ma\'lumotlarni kiriting
+              Hisobingizga kirish uchun ma'lumotlarni kiriting
             </p>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Phone */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Telefon raqam
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Telefon raqam</label>
               <div className="relative">
-                <Phone 
-                  size={20} 
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" 
-                />
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleInputChange}
-                  placeholder="(90) 123 32 32"
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                  placeholder="(99) 123 45 67"
+                  className={`w-full pl-10 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.phone ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
               </div>
-              {errors.phone && (
-                <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-              )}
-              <p className="text-xs text-gray-500 mt-1">
-                Faqat O\'zbekiston raqamlari: 90, 91, 93, 94, 95, 97, 98, 99
+              {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+              <p className="text-xs text-gray-500 mt-1.5">
+                Faqat 90, 93, 98, 99 bilan boshlanadigan raqamlar
               </p>
             </div>
 
             {/* Password */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Parol
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Parol</label>
               <div className="relative">
-                <Lock 
-                  size={20} 
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" 
-                />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
                   placeholder="6 ta belgi"
                   maxLength={6}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all ${
+                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                     errors.password ? 'border-red-500' : 'border-gray-300'
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                 >
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
-              )}
-              <p className="text-xs text-gray-500 mt-1">
-                6 ta belgidan iborat bo'lishi kerak
-              </p>
+              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
             </div>
 
             {/* General Error */}
             {errors.general && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
                 {errors.general}
               </div>
             )}
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3.5 rounded-lg transition-all disabled:opacity-60 disabled:cursor-not-allowed mt-3"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center gap-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  <span>Kirilmoqda...</span>
+                  <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
+                  <span>Yuklanmoqda...</span>
                 </div>
               ) : (
-                <span>Tizimga kirish</span>
+                'Kirish'
               )}
             </button>
           </form>
 
-          {/* Register Link */}
-          <div className="text-center mt-6">
-            <p className="text-gray-600">
-              Hisobingiz yo'qmi?
-              <Link 
-                to="/register" 
-                className="ml-1 text-blue-600 hover:text-blue-700 font-medium transition-colors"
-              >
-                Ro'yxatdan o'ting
-              </Link>
-            </p>
+          <div className="text-center mt-6 text-sm text-gray-600">
+            Hisobingiz yo'qmi?{' '}
+            <Link to="/register" className="text-blue-600 hover:underline font-medium">
+              Ro'yxatdan o'tish
+            </Link>
           </div>
         </div>
       </div>
