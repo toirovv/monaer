@@ -115,7 +115,12 @@ function Register() {
   // Backend API orqali Telegram botga xabar yuborish
   const sendToTelegram = async (userData) => {
     try {
-      const response = await fetch('http://localhost:5000/api/send-message', {
+      // Development uchun local server, production uchun Vercel API
+      const apiUrl = process.env.NODE_ENV === 'development' 
+        ? 'http://localhost:5000/api/send-message'
+        : '/api/send-message'
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
