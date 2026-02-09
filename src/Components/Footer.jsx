@@ -1,6 +1,5 @@
 import React from "react";
 import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Youtube, Send, Truck, Shield, CreditCard } from "lucide-react";
-
 function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -19,21 +18,37 @@ function Footer() {
     ],
     contact: [
       { icon: Phone, text: "+998 55 513 43 43", href: "tel:+998555134343" },
-      { icon: Mail, text: "info@monaer.uz", href: "mailto:info@monaer.uz" },
-      { icon: MapPin, text: "Sergeli, Mashina bozori", href: "#" },
-      { icon: Clock, text: "Dush-Jum: 9:00 - 18:00", href: "#" },
+      { icon: MapPin, text: "Toshkent shahar, Yangi sergeli ko'chasi 7/27", href: "#" },
+      { icon: Clock, text: "Dushanba- Yakashanba: 9:00 - 18:00", href: "#" },
     ],
   };
 
   const socialLinks = [
-    { icon: Facebook, href: "#", color: "hover:bg-blue-600" },
-    { icon: Instagram, href: "#", color: "hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600" },
-    { icon: Youtube, href: "#", color: "hover:bg-red-600" },
+    {
+      icon: Phone,
+      href: "tel:+998555134343",
+      color: "hover:bg-green-600",
+    },
+    {
+      icon: Instagram,
+      href: "https://www.instagram.com/monaer.uz?igsh=dmx3eWFzY2UwaXM3&utm_source=qr",
+      color: "hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-600",
+    },
+    {
+      icon: Youtube,
+      href: "https://www.youtube.com/@monaeruz",
+      color: "hover:bg-red-600",
+    },
+    {
+      icon: Send, 
+      href: "https://t.me/monaer_uzbekistan",
+      color: "hover:bg-sky-500",
+    },
   ];
+
 
   return (
     <footer className="bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 text-white relative overflow-hidden">
-      {/* Background pattern */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
@@ -43,7 +58,7 @@ function Footer() {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 py-8 sm:py-12 lg:py-16">
-          
+
           {/* Company Info */}
           <div className="space-y-4 sm:space-y-6">
             <div>
@@ -53,7 +68,7 @@ function Footer() {
                 className="h-10 sm:h-12 rounded-lg mb-3 sm:mb-4"
               />
               <p className="text-gray-300 text-sm leading-relaxed">
-                Monaer - O'zbekistondagi eng yirik avtomobil ehtiyot qismlari yetkazib beruvchi kompaniya. 
+                Monaer - O'zbekistondagi eng yirik avtomobil ehtiyot qismlari yetkazib beruvchi kompaniya.
                 Sifat, ishonch va mijozlarga xizmatlash bizning asosiy tamoyillarimiz.
               </p>
             </div>
@@ -121,7 +136,7 @@ function Footer() {
         {/* Bottom Section */}
         <div className="border-t border-white/10 py-4 sm:py-6">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-6">
-            
+
             {/* Social Links */}
             <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full lg:w-auto text-center sm:text-left">
               <span className="text-xs sm:text-sm text-gray-400">Ijtimoiy tarmoqlar:</span>
