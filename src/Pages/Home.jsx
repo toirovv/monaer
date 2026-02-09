@@ -35,7 +35,7 @@ function Home() {
 
     const timer = setTimeout(() => {
       setIsLoading(false);
-    }, 1200);
+    },);
 
     const animateElements = () => {
       gsap.fromTo(
