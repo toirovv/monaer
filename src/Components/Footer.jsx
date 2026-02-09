@@ -57,28 +57,6 @@ function Footer() {
                 Sifat, ishonch va mijozlarga xizmatlash bizning asosiy tamoyillarimiz.
               </p>
             </div>
-
-            {/* Features */}
-            <div className="space-y-2 sm:space-y-3">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                  <Truck size={14} sm:size={18} className="text-blue-400" />
-                </div>
-                <div>
-                  <h4 className="text-xs sm:text-sm font-semibold">Tez yetkazish</h4>
-                  <p className="text-xs text-gray-400 hidden sm:block">1-3 kun ichida</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-600/20 rounded-lg flex items-center justify-center">
-                  <CreditCard size={14} sm:size={18} className="text-purple-400" />
-                </div>
-                <div>
-                  <h4 className="text-xs sm:text-sm font-semibold">Xavfsiz to'lov</h4>
-                  <p className="text-xs text-gray-400 hidden sm:block">Har xil usullar</p>
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* Quick Links */}
