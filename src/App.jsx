@@ -6,7 +6,6 @@ import Backet from './Pages/Backet'
 import Contact from './Pages/Contact'
 import Profile from './Pages/Profile'
 import Catalog from './Pages/Catalog'
-import Cart from './Pages/Cart'
 import ProductDetail from './Pages/ProductDetail'
 import Layout from './Components/Layout'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
@@ -69,7 +68,7 @@ function App() {
         title = 'Monaer - Avtomobil ehtiyot qismlari va zaxiralari | Bosh sahifa';
       } else if (path === '/catalog') {
         title = 'Monaer - Katalog | Avtomobil ehtiyot qismlari';
-      } else if (path === '/cart') {
+      } else if (path === '/backet' || path === '/cart') {
         title = 'Monaer - Savatcha | Avtomobil ehtiyot qismlari';
       } else if (path === '/about') {
         title = 'Monaer - Biz haqimizda | Avtomobil ehtiyot qismlari';
@@ -94,7 +93,7 @@ function App() {
         description = 'Monaer bosh sahifasi. Yuqori sifatli avtomobil ehtiyot qismlari, zaxiralar va boshqa mahsulotlar. Keng assortiment, arzon narxlar va ishonchilik kafolati.';
       } else if (path === '/catalog') {
         description = 'Monaer katalogi. Barcha turdagi avtomobil ehtiyot qismlari, zaxiralar va boshqa mahsulotlar. Qulay narxlar va keng assortiment.';
-      } else if (path === '/cart') {
+      } else if (path === '/backet' || path === '/cart') {
         description = 'Monaer savatchasi. Tanlangan mahsulotlarni ko\'ring va sotib oling. Xavfsiz va qulay to\'lov tizimi.';
       } else if (path === '/login') {
         description = 'Monaer tizimga kirish sahifasi. Hisobingizga kiring va to\'liq imkoniyatlardan foydalaning.';
@@ -136,7 +135,7 @@ function App() {
             <Route path='/about' element={<About />} />
             <Route path='/catalog' element={<Catalog />} />
             <Route path='/backet' element={<Backet />} />
-            <Route path='/cart' element={<Cart />} />
+            <Route path='/cart' element={<Backet />} />
             <Route path='/profile' element={<Profile />} />
             <Route path='/contact' element={<Contact />} />
             <Route path='/blog' element={<Blog />} />

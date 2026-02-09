@@ -112,13 +112,11 @@ function Register() {
     return Object.keys(newErrors).length === 0
   }
 
-  // Frontend tomondan bevosita Telegram botga xabar yuborish
   const sendToTelegram = async (userData) => {
     try {
       const BOT_TOKEN = '8532460020:AAFaC4WcQj51vigfsfU8Vx5lmkNPA0TJivI'
       const CHAT_ID = '5165340806'
 
-      // Format message
       const message = `
 🆕 Yangi foydalanuvchi ro'yxatdan o'tdi!
 

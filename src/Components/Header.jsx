@@ -150,16 +150,9 @@ function Header() {
             <Link to="/profile" className="text-white hover:text-blue-300 transition-colors">
               <User size={24} />
             </Link>
-          ) : isAuthenticated ? (
-            <Link 
-              to="/register" 
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm sm:text-base"
-            >
-              Kirish
-            </Link>
           ) : (
             <Link 
-              to="/register" 
+              to="/login" 
               className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm sm:text-base"
             >
               Kirish
