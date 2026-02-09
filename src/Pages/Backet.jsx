@@ -202,7 +202,6 @@ function Backet() {
             </div>
           </div>
 
-          {/* Mahsulotlar */}
           <div className="px-4 py-5 space-y-4">
             {cart.map(item => (
               <div
