@@ -3,7 +3,8 @@ import { AuthContext } from '../App'
 import { 
   ShoppingCart, Plus, Minus, Trash2, User, Phone, MapPin, 
   CreditCard, Check, Map, X, Navigation, Package, Clock, 
-  Star, ArrowRight, ShoppingBag, Truck, Shield 
+  Star, ArrowRight, ShoppingBag, Truck, Shield, Sparkles,
+  TrendingUp, ChevronRight
 } from 'lucide-react'
 
 function Backet() {
@@ -122,45 +123,71 @@ function Backet() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 pb-8">
-      {/* Header - sticky */}
-      <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-blue-100 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-3.5 sm:py-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50">
+      {/* Animated Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-cyan-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-teal-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+      </div>
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-blue-100 shadow-lg">
+        <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 py-4 sm:py-5">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5 sm:gap-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-md">
-                <ShoppingBag className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="relative">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
+                  <ShoppingBag className="w-6 h-6 sm:w-7 sm:h-7 text-white" />
+                </div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-orange-500 rounded-full animate-pulse"></div>
               </div>
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Savatcha</h1>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                  Savatcha
+                </h1>
                 <p className="text-xs sm:text-sm text-gray-500">{cart.length} ta mahsulot</p>
               </div>
             </div>
-            <div className="text-right">
-              <p className="text-xs sm:text-sm text-gray-500">Jami</p>
-              <p className="text-xl sm:text-2xl font-bold text-blue-600">
-                {getTotalPrice().toLocaleString()} so'm
-              </p>
+            
+            <div className="flex items-center gap-4">
+              <div className="hidden sm:flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg">
+                <TrendingUp className="w-4 h-4 text-blue-600" />
+                <span className="text-sm font-medium text-blue-700">Tezkor yetkazish</span>
+              </div>
+              <div className="text-right">
+                <p className="text-xs sm:text-sm text-gray-500">Jami</p>
+                <p className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                  {getTotalPrice().toLocaleString()} so'm
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </header>
 
       {cart.length === 0 ? (
-        <div className="flex flex-col items-center justify-center min-h-[60vh] px-5 text-center">
-          <ShoppingBag className="w-24 h-24 sm:w-32 sm:h-32 text-gray-300 mb-6" />
-          <h3 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3">
-            Savatchangiz bo‘sh
+        <div className="flex flex-col items-center justify-center min-h-[70vh] px-4 text-center relative z-10">
+          <div className="relative mb-8">
+            <div className="w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-full flex items-center justify-center animate-pulse">
+              <ShoppingBag className="w-16 h-16 sm:w-20 sm:h-20 text-blue-400" />
+            </div>
+            <div className="absolute -top-2 -right-2">
+              <Sparkles className="w-8 h-8 text-yellow-400 animate-spin" />
+            </div>
+          </div>
+          <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-800 mb-4">
+            Savatchangiz bo'sh 😔
           </h3>
-          <p className="text-gray-600 mb-8 max-w-xs sm:max-w-md">
-            Mahsulotlarni qo‘shish uchun katalogga o‘ting
+          <p className="text-gray-600 mb-8 max-w-md text-base sm:text-lg">
+            Ajoyib mahsulotlarni qo'shish uchun katalogga o'ting
           </p>
           <a
             href="/catalog"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-7 sm:px-9 py-3.5 sm:py-4 rounded-xl font-medium hover:from-blue-600 hover:to-cyan-600 transition-all active:scale-95 shadow-md"
+            className="group inline-flex items-center gap-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 sm:px-10 py-4 sm:py-5 rounded-2xl font-semibold hover:from-blue-600 hover:to-cyan-600 transition-all active:scale-95 shadow-xl hover:shadow-2xl"
           >
-            <ShoppingCart className="w-5 h-5" />
-            Katalogga o‘tish
+            <ShoppingCart className="w-6 h-6 group-hover:scale-110 transition-transform" />
+            Katalogga o'tish
+            <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </a>
         </div>
       ) : (
@@ -185,8 +212,8 @@ function Backet() {
                   </div>
                   <div>
                     <Truck className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-1" />
-                    <p className="text-xl sm:text-2xl font-bold">24 soat</p>
-                    <p className="text-xs sm:text-sm opacity-80">Yetkazib berish</p>
+                    <p className="text-xl sm:text-2xl font-bold">2 soat</p>
+                    <p className="text-xs sm:text-sm opacity-80">Tezkor yetkazish</p>
                   </div>
                   <div>
                     <Shield className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-1" />
@@ -238,7 +265,7 @@ function Backet() {
 
                           <button
                             onClick={() => removeFromCart(item.id)}
-                            className="p-3 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-3 text-orange-500 hover:bg-orange-50 rounded-lg transition-colors"
                           >
                             <Trash2 className="w-5 h-5 sm:w-6 sm:h-6" />
                           </button>

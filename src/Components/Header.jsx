@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react'
+  import React, { useEffect, useState, useContext } from 'react'
 import { User, ShoppingCart } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { AuthContext } from '../App'
@@ -81,7 +81,7 @@ function Header() {
           className={`
             relative flex items-center justify-center transition-all duration-200
             ${isMobile 
-              ? 'flex-1 py-3 px-2 text-[11px] sm:text-sm' 
+              ? 'flex-1 py-3 px-1 text-[10px] xs:text-[11px]' 
               : 'px-5 py-3 text-base'
             }
             ${isActive
@@ -149,7 +149,7 @@ function Header() {
           ) : (
             <Link 
               to="/login" 
-              className="  text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm sm:text-base"
+              className="    text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm sm:text-base"
             >
               <User size={24} />
             </Link>
@@ -158,7 +158,7 @@ function Header() {
       </div>
 
       <nav className="sm:hidden bg-[#1e293b]/95 border-t border-gray-700/60">
-        <div className="w-[350px] p-[10px] gap-[10px] flex items-center justify-around">
+        <div className="w-full px-2 py-2 gap-1 flex items-center justify-around">
           {renderNavLinks(true)}
         </div>
       </nav>
