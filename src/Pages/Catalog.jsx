@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { Search, ShoppingBag, SlidersHorizontal } from 'lucide-react'
+import { Search, ShoppingBag, SlidersHorizontal, ArrowLeft, ArrowRight } from 'lucide-react'
 import { products } from './Products'
 import ProductCard from '../Components/ProductCard'
 import LoadingSpinner from '../Components/LoadingSpinner'
+import {  useNavigate } from 'react-router-dom'
 
 function Catalog() {
+  const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [sortBy, setSortBy] = useState('name')
@@ -19,9 +21,11 @@ function Catalog() {
 
     const urlParams = new URLSearchParams(window.location.search)
     const search = urlParams.get('search')
+    const category = urlParams.get('category')
     if (search) setSearchTerm(search)
+    if (category) setSelectedCategory(category)
 
-    const timer = setTimeout(() => setIsLoading(false), 2000)
+    const timer = setTimeout(() => setIsLoading(false), 1500)
 
     const handleClickOutside = (event) => {
       if (isFilterOpen && !event.target.closest('.filter-dropdown')) {
@@ -36,33 +40,46 @@ function Catalog() {
     }
   }, [isFilterOpen])
 
-  const categories = [
-    { id: 'all', name: 'Barchasi', count: products.length },
-    { id: 'brakes', name: 'Tormoz Tizimi', count: 8 },
-    { id: 'wheels', name: "G'ildiraklar", count: 3 },
-  ]
+  const handleCategoryClick = (categoryId) => {
+    setSelectedCategory(categoryId)
+    // Update URL
+    const params = new URLSearchParams()
+    if (categoryId !== 'all') {
+      params.set('category', categoryId)
+    } else {
+      params.delete('category')
+    }
+    if (searchTerm) {
+      params.set('search', searchTerm)
+    }
+    const newUrl = params.toString() ? `/catalog?${params.toString()}` : '/catalog'
+    navigate(newUrl, { replace: true })
+  }
 
-  const filteredProducts = products
-    .filter(product => {
-      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase())
-      const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory
-      const matchesPrice = product.price >= priceRange.min && product.price <= priceRange.max
-      const matchesAvailability = !onlyAvailable || product.available
-      return matchesSearch && matchesCategory && matchesPrice && matchesAvailability
-    })
-    .sort((a, b) => {
-      if (sortBy === 'name') return a.name.localeCompare(b.name)
-      if (sortBy === 'price-low') return a.price - b.price
-      if (sortBy === 'price-high') return b.price - a.price
-      if (sortBy === 'rating') return b.rating - a.rating
-      return 0
-    })
+  const handleBackToCategories = () => {
+    setSelectedCategory('all')
+    navigate('/catalog', { replace: true })
+  }
+
+  const categories = [
+    { id: 'brakes', name: 'Tormoz Tizimi', count: 8, image: '/images/categories/brakes.jpg' },
+    { id: 'wheels', name: "G'ildiraklar", count: 3, image: '/images/categories/wheels.jpg' },
+    { id: 'engine', name: 'Dvigatel', count: 12, image: '/images/categories/engine.jpg' },
+    { id: 'suspension', name: 'Osma', count: 7, image: '/images/categories/suspension.jpg' },
+    { id: 'transmission', name: 'Transmissiya', count: 5, image: '/images/categories/transmission.jpg' },
+    { id: 'electrical', name: 'Elektrika', count: 9, image: '/images/categories/electrical.jpg' },
+    { id: 'interior', name: 'Salon', count: 6, image: '/images/categories/interior.jpg' },
+    { id: 'exterior', name: 'Tashqi', count: 4, image: '/images/categories/exterior.jpg' },
+    { id: 'lighting', name: 'Chiroqlar', count: 11, image: '/images/categories/lighting.jpg' },
+    { id: 'filters', name: 'Filtrlar', count: 15, image: '/images/categories/filters.jpg' },
+    { id: 'belts', name: 'Remenlar', count: 6, image: '/images/categories/belts.jpg' },
+    { id: 'body', name: 'Kuzov qismlari', count: 8, image: '/images/categories/body.jpg' },
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       {isLoading && <LoadingSpinner />}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* HEADER */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <ShoppingBag className="text-blue-600" size={32} />
@@ -81,11 +98,10 @@ function Catalog() {
                 placeholder="Mahsulotlarni qidirish..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full sm:w-[240px] pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                className="w-full sm:w-[400px] pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
               />
             </div>
 
-            {/* FILTER BUTTON */}
             <div className="relative filter-dropdown w-full sm:w-auto">
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
@@ -95,7 +111,6 @@ function Catalog() {
                 <span>Filterlar</span>
               </button>
 
-              {/* DROPDOWN WITH TRANSITION */}
               <div
                 className={`absolute top-full left-0 mt-2 w-full sm:w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10 overflow-hidden transition-all duration-300 ease-in-out
       ${isFilterOpen ? 'max-h-96 opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95'}
@@ -123,42 +138,53 @@ function Catalog() {
           </div>
         </div>
 
-
-        {/* CATEGORIES */}
-        <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Kategoriyalar</h2>
-          <div className="flex flex-wrap gap-2">
-            {categories.map(category => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-3 py-1.5 rounded-lg transition-all duration-200 text-sm cursor-pointer ${selectedCategory === category.id
-                  ? 'bg-blue-500 text-white shadow-md transform scale-105'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm'
-                  }`}
-              >
-                {category.name} ({category.count})
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* PRODUCTS GRID */}
-        <div className="mb-4 flex justify-between items-center">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Mahsulotlar ({filteredProducts.length})
-          </h2>
-        </div>
-
-        {filteredProducts.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-            <p className="text-gray-500">Mahsulotlar topilmadi</p>
-          </div>
+        {selectedCategory === 'all' ? (
+          <>
+            <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Kategoriyalar</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                {categories.filter(cat => cat.id !== 'all').map(category => (
+                  <div
+                    key={category.id}
+                    onClick={() => handleCategoryClick(category.id)}
+                    className={`category-card group bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-3 sm:p-4 cursor-pointer hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:scale-105 ${
+                      selectedCategory === category.id ? 'ring-2 ring-blue-500 bg-blue-50' : ''
+                    }`}
+                  >
+                    <div className="flex flex-col items-center text-center">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-blue-50 to-blue-100 rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300">
+                        <span className="text-lg sm:text-xl">
+                          {category.id === 'brakes' && '🚗'}
+                          {category.id === 'wheels' && '🛞'}
+                          {category.id === 'engine' && '⚙️'}
+                          {category.id === 'suspension' && '🛞'}
+                          {category.id === 'transmission' && '⚡'}
+                          {category.id === 'electrical' && '💡'}
+                          {category.id === 'interior' && '🪑'}
+                          {category.id === 'exterior' && '🎨'}
+                        </span>
+                      </div>
+                      <h3 className="text-xs sm:text-sm font-bold text-gray-800 mb-1 group-hover:text-blue-600 transition-colors duration-300">{category.name}</h3>
+                      <p className="text-xs text-gray-600 bg-blue-50 px-2 py-1 rounded-full">{category.count} mahsulot</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+          <div>
+            <button onClick={handleBackToCategories} className="flex items-center gap-2 mb-4">
+              <ArrowLeft size={16} />
+              <span>Orqaga</span>
+            </button>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {products
+                .filter((product) => product.category === selectedCategory)
+                .map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+            </div>
           </div>
         )}
       </div>

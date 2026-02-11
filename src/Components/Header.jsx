@@ -94,7 +94,6 @@ function Header() {
         >
           {item.label}
 
-          {/* Faqat active holatda pastdan chiziq */}
           {isActive && (
             <span 
               className={`
@@ -124,7 +123,6 @@ function Header() {
 
   return (
     <header className="bg-[#1e293b] shadow-lg sticky top-0 z-50">
-      {/* Yuqori qism */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
         <Link to="/">
           <img
@@ -134,34 +132,31 @@ function Header() {
           />
         </Link>
 
-        {/* Desktop navigatsiya */}
         <nav className="hidden sm:flex flex-1 justify-center gap-x-4 md:gap-x-8 lg:gap-x-12">
           {renderNavLinks()}
         </nav>
 
-        {/* Ikonlar */}
         <div className="flex items-center gap-4 sm:gap-6">
           <Link to="/cart" className="text-white hover:text-blue-300 relative transition-colors">
             <ShoppingCart size={24} />
             <CartBadge />
           </Link>
           
-          {isAuthenticated && isRegistered ? (
+          {isAuthenticated ? (
             <Link to="/profile" className="text-white hover:text-blue-300 transition-colors">
               <User size={24} />
             </Link>
           ) : (
             <Link 
               to="/login" 
-              className="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm sm:text-base"
+              className="  text-white font-medium px-4 py-2 rounded-lg transition-colors text-sm sm:text-base"
             >
-              Kirish
+              <User size={24} />
             </Link>
           )}
         </div>
       </div>
 
-      {/* Mobil pastki navigatsiya */}
       <nav className="sm:hidden bg-[#1e293b]/95 border-t border-gray-700/60">
         <div className="w-[350px] p-[10px] gap-[10px] flex items-center justify-around">
           {renderNavLinks(true)}

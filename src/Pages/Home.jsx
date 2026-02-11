@@ -193,7 +193,91 @@ function Home() {
             Kategoriyalar
           </h2>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 md:gap-6">
+              <div
+                onClick={() => window.location.href = '/catalog'}
+                className="category-card group bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-4 sm:p-6 cursor-pointer hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:scale-105"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-blue-50 to-blue-100 rounded-full flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-xl sm:text-2xl lg:text-3xl">🚗</span>
+                  </div>
+                  <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">Tormoz Tizimi</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 bg-blue-50 px-2 sm:px-3 py-1 rounded-full">8 mahsulot</p>
+                </div>
+              </div>
+              <div
+                onClick={() => window.location.href = '/catalog'}
+                className="category-card group bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-4 sm:p-6 cursor-pointer hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:scale-105"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-green-50 to-green-100 rounded-full flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-xl sm:text-2xl lg:text-3xl">⚙️</span>
+                  </div>
+                  <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">Dvigatel</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 bg-green-50 px-2 sm:px-3 py-1 rounded-full">12 mahsulot</p>
+                </div>
+              </div>
+              <div
+                onClick={() => window.location.href = '/catalog'}
+                className="category-card group bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-4 sm:p-6 cursor-pointer hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:scale-105"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-purple-50 to-purple-100 rounded-full flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-xl sm:text-2xl lg:text-3xl">🛞</span>
+                  </div>
+                  <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">Osma</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 bg-purple-50 px-2 sm:px-3 py-1 rounded-full">7 mahsulot</p>
+                </div>
+              </div>
+              <div
+                onClick={() => window.location.href = '/catalog'}
+                className="category-card group bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-4 sm:p-6 cursor-pointer hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:scale-105"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-full flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-xl sm:text-2xl lg:text-3xl">⚡</span>
+                  </div>
+                  <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">Transmissiya</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 bg-yellow-50 px-2 sm:px-3 py-1 rounded-full">5 mahsulot</p>
+                </div>
+              </div>
+              <div
+                onClick={() => window.location.href = '/catalog'}
+                className="category-card group bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-4 sm:p-6 cursor-pointer hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:scale-105"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-red-50 to-red-100 rounded-full flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-xl sm:text-2xl lg:text-3xl">💡</span>
+                  </div>
+                  <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">Elektrika</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 bg-red-50 px-2 sm:px-3 py-1 rounded-full">9 mahsulot</p>
+                </div>
+              </div>
+              <div
+                onClick={() => window.location.href = '/catalog'}
+                className="category-card group bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-4 sm:p-6 cursor-pointer hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:scale-105"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-full flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-xl sm:text-2xl lg:text-3xl">🪑</span>
+                  </div>
+                  <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">Salon</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 bg-indigo-50 px-2 sm:px-3 py-1 rounded-full">6 mahsulot</p>
+                </div>
+              </div>
+              <div
+                onClick={() => window.location.href = '/catalog'}
+                className="category-card group bg-gradient-to-br from-white to-gray-50 rounded-xl shadow-lg p-4 sm:p-6 cursor-pointer hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-blue-200 hover:scale-105"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-orange-50 to-orange-100 rounded-full flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <span className="text-xl sm:text-2xl lg:text-3xl">🎨</span>
+                  </div>
+                  <h3 className="text-sm sm:text-base lg:text-lg font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors duration-300">Tashqi</h3>
+                  <p className="text-xs sm:text-sm text-gray-600 bg-orange-50 px-2 sm:px-3 py-1 rounded-full">4 mahsulot</p>
+                </div>
+              </div>
           </div>
         </div>
       </div>

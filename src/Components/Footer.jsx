@@ -18,7 +18,7 @@ function Footer() {
     ],
     contact: [
       { icon: Phone, text: "+998 55 513 43 43", href: "tel:+998555134343" },
-      { icon: MapPin, text: "Toshkent shahar, Yangi sergeli ko'chasi 7/27", href: "#" },
+      { icon: MapPin, text: "Toshkent shahar, Yangi sergeli ko'chasi 7/27", href: "https://yandex.uz/maps/-/CPQiURit" },
       { icon: Clock, text: "Dushanba- Yakashanba: 9:00 - 18:00", href: "#" },
     ],
   };
