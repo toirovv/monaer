@@ -55,34 +55,34 @@ function Footer() {
         }}></div>
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 py-8 sm:py-12 lg:py-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 py-6 sm:py-8 lg:py-12">
 
-          {/* Company Info */}
-          <div className="space-y-4 sm:space-y-6">
-            <div>
+          {/* Company Info - Centered on mobile */}
+          <div className="space-y-3 sm:space-y-4 lg:space-y-6 text-center sm:text-left lg:text-left">
+            <div className="flex flex-col items-center sm:items-start lg:items-start">
               <img
                 src="https://static.tildacdn.com/tild3463-3734-4963-a665-653363316531/Frame_2087327802.png"
                 alt="Monaer Logo"
-                className="h-10 sm:h-12 rounded-lg mb-3 sm:mb-4"
+                className="h-8 sm:h-10 lg:h-12 rounded-lg mb-2 sm:mb-3 lg:mb-4"
               />
-              <p className="text-gray-300 text-sm leading-relaxed">
+              <p className="text-gray-300 text-xs sm:text-sm leading-relaxed max-w-xs mx-auto sm:mx-0 lg:mx-0">
                 Monaer - O'zbekistondagi eng yirik avtomobil ehtiyot qismlari yetkazib beruvchi kompaniya.
                 Sifat, ishonch va mijozlarga xizmatlash bizning asosiy tamoyillarimiz.
               </p>
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 text-white text-center sm:text-left">Tezkor havolalar</h3>
-            <ul className="space-y-2 sm:space-y-3">
+          {/* Quick Links - Centered on mobile */}
+          <div className="text-center sm:text-left lg:text-left">
+            <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-3 sm:mb-4 lg:mb-6 text-white">Tezkor havolalar</h3>
+            <ul className="space-y-1.5 sm:space-y-2 lg:space-y-3">
               {footerLinks.company.map((link, index) => (
                 <li key={index}>
                   <a
                     href={link.href}
-                    className="text-gray-300 hover:text-white transition-colors duration-200 text-xs sm:text-sm flex items-center gap-2 group justify-center sm:justify-start"
+                    className="text-gray-300 hover:text-white transition-colors duration-200 text-xs sm:text-sm flex items-center gap-2 group justify-center sm:justify-start lg:justify-start"
                   >
                     <span className="w-1.5 h-1.5 bg-blue-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                     {link.name}
@@ -92,15 +92,15 @@ function Footer() {
             </ul>
           </div>
 
-          {/* Services */}
-          <div>
-            <h3 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 text-white text-center sm:text-left">Xizmatlar</h3>
-            <ul className="space-y-2 sm:space-y-3">
+          {/* Services - Centered on mobile */}
+          <div className="text-center sm:text-left lg:text-left">
+            <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-3 sm:mb-4 lg:mb-6 text-white">Xizmatlar</h3>
+            <ul className="space-y-1.5 sm:space-y-2 lg:space-y-3">
               {footerLinks.services.map((link, index) => (
                 <li key={index}>
                   <a
                     href={link.href}
-                    className="text-gray-300 hover:text-white transition-colors duration-200 text-xs sm:text-sm flex items-center gap-2 group justify-center sm:justify-start"
+                    className="text-gray-300 hover:text-white transition-colors duration-200 text-xs sm:text-sm flex items-center gap-2 group justify-center sm:justify-start lg:justify-start"
                   >
                     <span className="w-1.5 h-1.5 bg-green-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                     {link.name}
@@ -110,44 +110,41 @@ function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
-          <div>
-            <h3 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 text-white text-center sm:text-left">Aloqa</h3>
-            <div className="space-y-3 sm:space-y-4">
+          {/* Contact - Centered on mobile */}
+          <div className="text-center sm:text-left lg:text-left">
+            <h3 className="text-sm sm:text-base lg:text-lg font-bold mb-3 sm:mb-4 lg:mb-6 text-white">Aloqa</h3>
+            <div className="space-y-2 sm:space-y-3 lg:space-y-4">
               {footerLinks.contact.map((item, index) => (
                 <a
                   key={index}
                   href={item.href}
-                  className="flex items-start gap-2 sm:gap-3 text-gray-300 hover:text-white transition-colors duration-200 group justify-center sm:justify-start"
+                  className="flex items-start gap-2 sm:gap-3 lg:gap-3 text-gray-300 hover:text-white transition-colors duration-200 group justify-center sm:justify-start lg:justify-start"
                 >
-                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600/30 transition-colors">
-                    <item.icon size={12} sm:size={16} className="text-blue-400" />
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 lg:w-8 lg:h-8 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-blue-600/30 transition-colors">
+                    <item.icon size={10} sm:size={12} lg:size={16} className="text-blue-400" />
                   </div>
                   <span className="text-xs sm:text-sm">{item.text}</span>
                 </a>
               ))}
             </div>
-
           </div>
         </div>
 
-
-
         {/* Bottom Section */}
-        <div className="border-t border-white/10 py-4 sm:py-6">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 sm:gap-6">
+        <div className="border-t border-white/10 py-3 sm:py-4 lg:py-6">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-3 sm:gap-4 lg:gap-6">
 
-            {/* Social Links */}
-            <div className="flex flex-col sm:flex-row items-center gap-3 sm:gap-4 w-full lg:w-auto text-center sm:text-left">
+            {/* Social Links - Centered on mobile */}
+            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3 lg:gap-4 w-full lg:w-auto text-center">
               <span className="text-xs sm:text-sm text-gray-400">Ijtimoiy tarmoqlar:</span>
-              <div className="flex gap-2 justify-center sm:justify-start">
+              <div className="flex gap-1.5 sm:gap-2 justify-center">
                 {socialLinks.map((social, index) => (
                   <a
                     key={index}
                     href={social.href}
-                    className={`w-8 h-8 sm:w-10 sm:h-10 bg-white/10 rounded-lg flex items-center justify-center transition-all duration-200 ${social.color} hover:scale-110`}
+                    className={`w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-white/10 rounded-lg flex items-center justify-center transition-all duration-200 ${social.color} hover:scale-110`}
                   >
-                    <social.icon size={14} sm:size={18} className="text-white" />
+                    <social.icon size={12} sm:size={14} lg:size={18} className="text-white" />
                   </a>
                 ))}
               </div>

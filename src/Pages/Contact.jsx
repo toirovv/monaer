@@ -1,289 +1,209 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
-  Phone,
-  Mail,
-  MapPin,
-  Clock,
-  Send,
-  Facebook,
-  Instagram,
-  Twitter,
-  CheckCircle
+  Phone, Mail, MapPin, Clock, Send, CheckCircle,
+  Facebook, Instagram, Twitter, Truck, Shield, Headphones, Zap, MessageSquare
 } from 'lucide-react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import LoadingSpinner from '../Components/LoadingSpinner'
 
-/* ================= YANDEX MAP ================= */
-const YandexMapComponent = () => {
-  const mapRef = React.useRef(null)
-  const [isMapLoaded, setIsMapLoaded] = React.useState(false)
-
-  React.useEffect(() => {
-    const loadYandexMap = () => {
-      if (window.ymaps) {
-        setIsMapLoaded(true)
-        initializeMap()
-        return
-      }
-
-      const script = document.createElement('script')
-      script.src = 'https://api-maps.yandex.ru/2.1/?apikey=YOUR_YANDEX_API_KEY&lang=ru_RU'
-      script.type = 'text/javascript'
-      script.onload = () => {
-        window.ymaps.ready(() => {
-          setIsMapLoaded(true)
-          initializeMap()
-        })
-      }
-      document.head.appendChild(script)
-    }
-
-    const initializeMap = () => {
-      if (mapRef.current && window.ymaps) {
-        const map = new window.ymaps.Map(mapRef.current, {
-          center: [41.2587, 69.2233], // Sergeli Mashina Bozor koordinatalari
-          zoom: 16,
-          controls: ['zoomControl', 'fullscreenControl']
-        })
-
-        // Sergeli Mashina Bozor marker
-        const placemark = new window.ymaps.Placemark([41.2587, 69.2233], {
-          balloonContentHeader: 'Monaer',
-          balloonContentBody: 'Avtomobil ehtiyot qismlari do\'koni<br>Sergeli Mashina Bozori<br>Telefon: +998 55 513 43 43',
-          balloonContentFooter: 'Ish vaqti: 9:00 - 18:00',
-          hintContent: 'Monaer - Sergeli Mashina Bozori'
-        }, {
-          preset: 'islands#redDotIcon',
-          iconColor: '#0067B2'
-        })
-
-        map.geoObjects.add(placemark)
-      }
-    }
-
-    loadYandexMap()
-  }, [])
-
-  if (!isMapLoaded) {
-    return (
-      <div className="w-full h-[300px] bg-gray-100 rounded-lg flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
-          <p className="text-gray-600 text-sm">Xarita yuklanmoqda...</p>
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div 
-      ref={mapRef} 
-      className="w-full h-[300px] sm:h-[400px] lg:h-[500px] rounded-lg shadow-lg"
-      style={{ width: '100%', height: '100%' }}
-    />
-  )
-}
-
-gsap.registerPlugin(ScrollTrigger)
-
-/* ================= CONTACT ================= */
 function Contact() {
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' })
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    window.scrollTo(0, 0)
-    const timer = setTimeout(() => setIsLoading(false), 2000)
-    return () => clearTimeout(timer)
-  }, [])
-
-  const handleSubmit = e => {
-    e.preventDefault()
-    setIsSubmitted(true)
-    
-    // Show notification
-    const notification = document.createElement('div')
-    notification.className = 'fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 z-50 animate-pulse'
-    notification.innerHTML = `
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <span class="font-medium">Xabaringiz yuborildi!</span>
-    `
-    document.body.appendChild(notification)
-    
-    // Remove notification after 3 seconds
-    setTimeout(() => {
-      notification.remove()
-    }, 3000)
-    
-    // Reset form after 3 seconds
-    setTimeout(() => {
-      setIsSubmitted(false)
-      e.target.reset()
-    }, 3000)
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    await new Promise(r => setTimeout(r, 1400))
+    setIsSubmitting(false)
+    setIsSubmitted(true)
+    setFormData({ name: '', email: '', phone: '', message: '' })
+    setTimeout(() => setIsSubmitted(false), 5000)
+  }
+
+  const contacts = [
+    { icon: Phone, label: 'Telefon', value: '+998 55 513 43 43', href: 'tel:+998555134343' },
+    { icon: Mail, label: 'Email', value: 'info@monaer.uz', href: 'mailto:info@monaer.uz' },
+    { icon: MapPin, label: 'Manzil', value: "Toshkent sh., Yangi Sergeli ko'chasi 7/27", href: 'https://yandex.uz/maps/-/CPQiURit' },
+    { icon: Clock, label: 'Ish vaqti', value: 'Dushanba–Yakshanba: 09:00–18:00', href: '#' }
+  ]
+
+  const socials = [
+    { icon: Facebook, href: 'https://facebook.com/monaer.uz', color: 'bg-blue-600 hover:bg-blue-700' },
+    { icon: Instagram, href: 'https://instagram.com/monaer.uz', color: 'bg-teal-600 hover:bg-teal-700' },
+    { icon: Twitter, href: 'https://twitter.com/monaer_uz', color: 'bg-cyan-600 hover:bg-cyan-700' }
+  ]
+
+  const features = [
+    { icon: Truck, title: 'Tez yetkazib berish', desc: 'Butun O‘zbekiston bo‘ylab' },
+    { icon: Shield, title: 'Sifat kafolati', desc: 'Ishonchli va original' },
+    { icon: Headphones, title: '24/7 yordam', desc: 'Har doim yoningizda' },
+    { icon: Zap, title: 'Keng assortiment', desc: 'Yuzlab tanlov' }
+  ]
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {isLoading && <LoadingSpinner />}
+    <div className="min-h-screen bg-gray-50/50">
+      {/* Hero – sodda va katta */}
+      <div className="bg-gradient-to-br from-teal-600/10 via-cyan-50/30 to-white pt-16 pb-12 md:pt-24 md:pb-16">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
+          <div className="inline-flex items-center gap-3 bg-teal-100/80 backdrop-blur-sm px-6 py-3 rounded-full border border-teal-200 mb-8">
+            <MessageSquare className="w-6 h-6 text-teal-700" />
+            <span className="font-medium text-teal-800">Biz bilan bog‘laning</span>
+          </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        {/* HERO */}
-        <div className="text-center mb-10 sm:mb-12">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mt-[90px] text-blue-600 mb-3">
-            Biz bilan Bog'laning
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            Savollaringiz bormi? <span className="text-teal-600">Biz yordam beramiz</span>
           </h1>
-          <p className="text-base sm:text-xl text-gray-600 max-w-2xl mx-auto">
-            Savollar, maslahatlar yoki hamkorlik uchun biz bilan bog'laning
+
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto">
+            Buyurtma, maslahat yoki hamkorlik bo‘yicha – yozing. 24 soat ichida javob beramiz.
           </p>
         </div>
+      </div>
 
-        {/* CONTACT CARDS */}
-        {/* ✅ mobile: 2 ta | desktop o'zgarmadi */}
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12">
-
-          {[
-            { icon: <Phone size={20} />, title: 'Telefon', text: '+998 55 513 43 43', color: 'blue' },
-            { icon: <Mail size={20} />, title: 'Email', text: 'info@monaer.uz', color: 'green' },
-            { icon: <MapPin size={20} />, title: 'Manzil', text: "Toshkent", color: 'purple' },
-            { icon: <Clock size={20} />, title: 'Ish vaqti', text: '9:00 - 18:00', color: 'orange' }
-          ].map((item, i) => (
+      {/* Features */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16 lg:py-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {features.map((f, i) => (
             <div
               key={i}
-              className="contact-card bg-white rounded-xl shadow-lg
-              p-3 sm:p-6 hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-100"
+              className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200 hover:border-teal-400 hover:shadow-md transition-all duration-300"
             >
-              <div className={`w-8 h-8 sm:w-12 sm:h-12 bg-${item.color}-100 rounded-lg flex items-center justify-center mb-2 sm:mb-4`}>
-                <div className={`text-${item.color}-600`}>
-                  {item.icon}
-                </div>
+              <div className="w-14 h-14 bg-teal-50 rounded-xl flex items-center justify-center mb-6">
+                <f.icon size={28} className="text-teal-600" />
               </div>
-              <h3 className="text-xs sm:text-sm lg:text-lg font-semibold text-gray-900 mb-1">
-                {item.title}
-              </h3>
-              <p className="text-xs sm:text-base lg:text-base text-gray-600">
-                {item.text}
-              </p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">{f.title}</h3>
+              <p className="text-gray-600">{f.desc}</p>
             </div>
           ))}
         </div>
+      </div>
 
-        {/* FORM + INFO */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-12">
+      {/* Main – Forma + Kontaktlar */}
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 pb-20 lg:pb-28">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center ">
+          {/* Forma – chapda */}
+          <div className="bg-white rounded-2xl shadow-md p-8 lg:p-10 border  border-gray-200">
+            <h2 className="text-3xl font-bold text-gray-900 mb-3">Xabar yuboring</h2>
+            <p className="text-gray-600 mb-8">Tez va qulay javob oling</p>
 
-          {/* FORM */}
-          <div className="bg-white rounded-xl shadow-lg p-3 sm:p-5 lg:p-8 border border-gray-100">
-            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold mb-3 sm:mb-4 text-blue-600">
-              Xabar yuboring
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 text-blue-600">
-                  Ism
-                </label>
-                <input 
-                  className="w-full p-2 sm:p-3 border-2 border-blue-200 rounded-lg text-sm sm:text-base focus:border-blue-500 focus:outline-none transition-colors" 
-                  placeholder="Ismingizni kiriting" 
-                />
+            {isSubmitted ? (
+              <div className="bg-teal-50 border border-teal-100 rounded-xl p-10 text-center">
+                <CheckCircle className="w-16 h-16 text-teal-600 mx-auto mb-6" />
+                <h3 className="text-2xl font-bold text-teal-800 mb-3">Muvaffaqiyatli yuborildi!</h3>
+                <p className="text-teal-700">Tez orada siz bilan bog‘lanamiz. Rahmat!</p>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 text-blue-600">
-                  Email
-                </label>
-                <input 
-                  className="w-full p-2 sm:p-3 border-2 border-blue-200 rounded-lg text-sm sm:text-base focus:border-blue-500 focus:outline-none transition-colors" 
-                  placeholder="Emailingizni kiriting" 
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1 text-blue-600">
-                  Xabar
-                </label>
-                <textarea 
-                  className="w-full p-2 sm:p-3 border-2 border-blue-200 rounded-lg text-sm sm:text-base focus:border-blue-500 focus:outline-none transition-colors resize-none" 
-                  rows="4" 
-                  placeholder="Xabaringizni yozing..."
-                ></textarea>
-              </div>
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 sm:py-3 rounded-lg flex justify-center gap-2 text-sm sm:text-base transition-colors">
-                <Send size={16} sm:size={18} /> Yuborish
-              </button>
-            </form>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Ismingiz *</label>
+                    <input
+                      required name="name" value={formData.name} onChange={handleChange}
+                      className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-100 outline-none transition"
+                      placeholder="Ismingiz..."
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                    <input
+                      required type="email" name="email" value={formData.email} onChange={handleChange}
+                      className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-100 outline-none transition"
+                      placeholder="email@misol.uz"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Telefon *</label>
+                  <input
+                    required type="tel" name="phone" value={formData.phone} onChange={handleChange}
+                    className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-100 outline-none transition"
+                    placeholder="+998 XX XXX XX XX"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Xabar matni *</label>
+                  <textarea
+                    required name="message" value={formData.message} onChange={handleChange} rows={5}
+                    className="w-full px-5 py-3.5 border border-gray-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-100 outline-none resize-none transition"
+                    placeholder="Savolingiz yoki buyurtmangiz haqida batafsil yozing..."
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={`w-full py-4 px-8 rounded-lg text-white font-medium flex items-center justify-center gap-3 transition-all
+                    ${isSubmitting ? 'bg-teal-400 cursor-not-allowed' : 'bg-teal-600 hover:bg-teal-700 shadow-md hover:shadow-lg'}`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full" />
+                      Yuborilmoqda...
+                    </>
+                  ) : (
+                    <>
+                      <Send size={20} />
+                      Xabarni yuborish
+                    </>
+                  )}
+                </button>
+              </form>
+            )}
           </div>
 
-          {/* INFO */}
-          <div className="bg-white rounded-xl shadow-lg p-3 sm:p-5 lg:p-8 border border-gray-100">
-            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold mb-3 sm:mb-4 text-blue-600">
-              Biz bilan bog'laning
-            </h2>
+          {/* O‘ng taraf – kontaktlar, xarita, ijtimoiy */}
+          <div className="space-y-10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              {contacts.map((c, i) => (
+                <a
+                  key={i}
+                  href={c.href}
+                  className="flex items-center gap-4 bg-white p-6 rounded-xl border border-gray-200 hover:border-teal-400 hover:shadow-md transition-all"
+                >
+                  <c.icon size={28} className="text-teal-600" />
+                  <div>
+                    <div className="font-medium text-gray-900">{c.label}</div>
+                    <div className="text-gray-600">{c.value}</div>
+                  </div>
+                </a>
+              ))}
+            </div>
 
-            <div className="space-y-3 sm:space-y-4">
-              <div className="flex gap-2 sm:gap-3 items-center text-sm sm:text-base p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <Phone size={16} sm:size={18} className="text-blue-600" /> 
-                <span className="text-gray-700 font-medium">+998 55 513 43 43</span>
+            <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200">
+              <div className="p-6 border-b border-gray-200">
+                <h3 className="text-xl font-semibold text-gray-900">Bizning joylashuv</h3>
               </div>
-              <div className="flex gap-2 sm:gap-3 items-center text-sm sm:text-base p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <Mail size={16} sm:size={18} className="text-blue-600" /> 
-                <span className="text-gray-700 font-medium">info@monaer.uz</span>
-              </div>
-              <div className="flex gap-2 sm:gap-3 items-center text-sm sm:text-base p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <Clock size={16} sm:size={18} className="text-orange-600" /> 
-                <div>
-                  <span className="text-gray-700 font-medium block">Ish vaqti</span>
-                  <span className="text-gray-600 text-xs">Dushanba - Juma: 9:00 - 18:00</span>
-                </div>
-              </div>
-              <div className="flex gap-2 sm:gap-3 items-center text-sm sm:text-base p-3 bg-purple-50 rounded-lg border border-purple-200">
-                <MapPin size={16} sm:size={18} className="text-purple-600" /> 
-                <div>
-                  <span className="text-gray-700 font-medium block">Do'kon</span>
-                  <span className="text-gray-600 text-xs">Sergeli mashina bozori, BIZNES MARKET 2-qavat</span>
-                </div>
+              <div className="h-80 lg:h-[420px]">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3000.528166261393!2d69.212448!3d41.2320517!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae61947afb5fb3%3A0x4eb5241eda3b95f1!2sSergeli%20Moshina%20Bozor!5e0!3m2!1sru!2s!4v1770879712109!5m2!1sru!2s"
+                  width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy"
+                />
               </div>
             </div>
 
-            <div className="flex gap-2 sm:gap-3 mt-4 sm:mt-6">
-              <a href="#" className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center text-white transition-colors">
-                <Facebook size={16} sm:size={20} />
-              </a>
-              <a href="#" className="w-10 h-10 sm:w-12 sm:h-12 bg-pink-600 hover:bg-pink-700 rounded-lg flex items-center justify-center text-white transition-colors">
-                <Instagram size={16} sm:size={20} />
-              </a>
-              <a href="#" className="w-10 h-10 sm:w-12 sm:h-12 bg-black hover:bg-gray-800 rounded-lg flex items-center justify-center text-white transition-colors">
-                <Twitter size={16} sm:size={20} />
-              </a>
+            <div className="bg-white rounded-2xl p-8 shadow-md border border-gray-200">
+              <h3 className="text-xl font-semibold text-gray-900 mb-6">Ijtimoiy tarmoqlarda</h3>
+              <div className="flex gap-4">
+                {socials.map((s, i) => (
+                  <a
+                    key={i}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`w-12 h-12 rounded-lg flex items-center justify-center text-white transition shadow-sm ${s.color}`}
+                  >
+                    <s.icon size={22} />
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </div>
-
-   
-
-        <div className="bg-white rounded-xl shadow-lg p-5 sm:p-8 border border-gray-100 mt-8">
-          <h2 className="text-xl sm:text-2xl font-bold mb-4 text-blue-600">
-            Xarita
-          </h2>
-          
-          <div className="w-full h-[300px] sm:h-[400px] lg:h-[500px] rounded-lg overflow-hidden border-2 border-blue-200 mb-6">
-            <YandexMapComponent />
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <h3 className="font-semibold text-blue-900 mb-2">Manzil</h3>
-              <p className="text-gray-700">Sergeli tumani, Mashina bozori</p>
-              <p className="text-gray-700">BIZNES MARKET, 2-qavat</p>
-            </div>
-            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-              <h3 className="font-semibold text-green-900 mb-2">Ish vaqti</h3>
-              <p className="text-gray-700">Dushanba - Juma</p>
-              <p className="text-gray-700">9:00 - 18:00</p>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   )
