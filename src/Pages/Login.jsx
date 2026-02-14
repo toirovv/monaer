@@ -144,20 +144,42 @@ function Login() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000))
 
+      // Check for special dashboard credentials first
+      const cleanPhone = '+998' + formData.phone.replace(/[^\d]/g, '')
+      if (cleanPhone === '+998938573311' && formData.password === '123456') {
+        // Special user - create session and redirect to dashboard
+        const specialUser = {
+          phone: cleanPhone,
+          password: formData.password,
+          name: 'Special User',
+          role: 'admin'
+        }
+        localStorage.setItem('user', JSON.stringify(specialUser))
+        localStorage.setItem('isLoggedIn', 'true')
+        navigate('/dashboard')
+        return
+      }
+
       // Check if user exists in localStorage
       const userData = localStorage.getItem('user')
       if (userData) {
         const user = JSON.parse(userData)
         
         // Check if phone and password match
-        if (user.phone === formData.phone && user.password === formData.password) {
+        if (user.phone === cleanPhone && user.password === formData.password) {
           // Store login session
           localStorage.setItem('isLoggedIn', 'true')
           
-          // Telegramga xabar yuborish
-          await sendLoginToTelegram({ phone: formData.phone })
-          
-          navigate('/profile')
+          // Check if user has special credentials for dashboard access
+          if (user.phone === '+998938573311' && user.password === '123456') {
+            // Auto-login to dashboard for special user
+            navigate('/dashboard')
+          } else {
+            // Regular login - go to profile
+            // Telegramga xabar yuborish
+            await sendLoginToTelegram({ phone: formData.phone })
+            navigate('/profile')
+          }
         } else {
           setErrors({ general: 'Telefon raqam yoki parol noto\'g\'ri' })
         }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
-import { products } from "./Products";
+import { products as defaultProducts } from "./Products";
 
 import { Star, ShoppingCart, Plus, Minus, Truck, Shield, Clock, MapPin } from "lucide-react";
 
@@ -12,7 +12,54 @@ function ProductDetail() {
 
   const { id } = useParams();
 
-  const product = products.find(p => p.id === parseInt(id));
+  const [allProducts, setAllProducts] = useState([]);
+
+  const [product, setProduct] = useState(null);
+
+  // Load products from all sources
+  const loadAllProducts = () => {
+    const dashboardProducts = JSON.parse(localStorage.getItem('dashboardProducts') || '[]');
+    const mainProducts = JSON.parse(localStorage.getItem('products') || '[]');
+    const allProductsStorage = JSON.parse(localStorage.getItem('allProducts') || '[]');
+    const productsJsData = JSON.parse(localStorage.getItem('productsJsData') || '[]');
+    
+    // Combine all products: default from Products.js + dashboard added + main platform
+    const combinedProducts = [...defaultProducts];
+    
+    // Add dashboard products (avoid duplicates)
+    dashboardProducts.forEach(product => {
+      if (!combinedProducts.find(p => p.id === product.id)) {
+        combinedProducts.push(product);
+      }
+    });
+    
+    // Add main platform products (avoid duplicates)
+    mainProducts.forEach(product => {
+      if (!combinedProducts.find(p => p.id === product.id)) {
+        combinedProducts.push(product);
+      }
+    });
+    
+    // Add all products storage (avoid duplicates)
+    allProductsStorage.forEach(product => {
+      if (!combinedProducts.find(p => p.id === product.id)) {
+        combinedProducts.push(product);
+      }
+    });
+    
+    // Add productsJsData (avoid duplicates)
+    productsJsData.forEach(product => {
+      if (!combinedProducts.find(p => p.id === product.id)) {
+        combinedProducts.push(product);
+      }
+    });
+    
+    setAllProducts(combinedProducts);
+    
+    // Find the specific product
+    const foundProduct = combinedProducts.find(p => p.id === parseInt(id));
+    setProduct(foundProduct);
+  }
 
   const [cartQuantity, setCartQuantity] = useState(0);
 
@@ -22,7 +69,8 @@ function ProductDetail() {
 
     window.scrollTo(0, 0);
 
-    
+    // Load all products
+    loadAllProducts();
 
     // Load cart quantity from localStorage
 
@@ -72,7 +120,7 @@ function ProductDetail() {
 
     };
 
-  }, [product?.id]);
+  }, [id]);
 
 
 
@@ -178,7 +226,7 @@ function ProductDetail() {
 
   const relatedProducts = product?.carModel 
 
-    ? products.filter(p => p.carModel === product.carModel && p.id !== product.id)
+    ? allProducts.filter(p => p.carModel === product.carModel && p.id !== product.id)
 
     : [];
 

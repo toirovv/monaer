@@ -4,7 +4,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import MonaerImg1 from "../assets/images/MonaerImg1.png";
 import { Search, ShieldCheck, BadgeDollarSign, Car } from 'lucide-react';
-import { products } from './Products'; // o'z yo'lingizni saqlang
+import { products as defaultProducts } from './Products'; // o'z yo'lingizni saqlang
 import ProductCard from '../Components/ProductCard';
 import LoadingSpinner from '../Components/LoadingSpinner';
 import { Link, useNavigate } from 'react-router-dom';
@@ -15,11 +15,49 @@ gsap.registerPlugin(ScrollTrigger);
 
 function Home() {
 
-
   const [imageLoaded, setImageLoaded] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+
+  // Load products from products.json or fallback to default
+  const loadProducts = () => {
+    // First try to load from products.json file (updated by dashboard)
+    const productsFile = JSON.parse(localStorage.getItem('productsFile') || '[]');
+    
+    if (productsFile.length > 0) {
+      // Use products.json if it exists (has dashboard-added products)
+      setProducts(productsFile);
+      return;
+    }
+    
+    // Fallback to productsJson
+    const productsJson = JSON.parse(localStorage.getItem('productsJson') || '[]');
+    
+    if (productsJson.length > 0) {
+      // Use productsJson if it exists (has dashboard-added products)
+      setProducts(productsJson);
+      return;
+    }
+    
+    // Fallback to default products
+    setProducts(defaultProducts);
+  };
+
+  useEffect(() => {
+    loadProducts();
+    
+    // Listen for product updates from dashboard
+    const handleProductsUpdate = () => {
+      loadProducts();
+    }
+    window.addEventListener('productsUpdated', handleProductsUpdate);
+    
+    return () => {
+      window.removeEventListener('productsUpdated', handleProductsUpdate);
+    }
+  }, []);
 
   useEffect(() => {
     document.body.classList.add('soft-gradient-bg');

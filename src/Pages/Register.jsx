@@ -165,25 +165,32 @@ function Register() {
       await sendToTelegram({ fullName: formData.fullName, phone: formData.phone })
 
       // localStorage ga saqlash
-      localStorage.setItem(
-        'user',
-        JSON.stringify({
-          fullName: formData.fullName,
-          phone: formData.phone.replace(/[^\d]/g, ''),
-          password: formData.password, // real loyihada hash qilinishi kerak!
-          registeredAt: new Date().toISOString(),
-        })
-      )
+      const userData = {
+        fullName: formData.fullName,
+        phone: formData.phone.replace(/[^\d]/g, ''),
+        password: formData.password, // real loyihada hash qilinishi kerak!
+        registeredAt: new Date().toISOString(),
+      }
+      
+      localStorage.setItem('user', JSON.stringify(userData))
 
       // "Kirgan" holatini saqlash
       localStorage.setItem('isLoggedIn', 'true')
 
       setIsSuccess(true)
 
-      // 1.5 soniyadan keyin to'g'ridan-to'g'ri Home sahifasiga o'tish
-      setTimeout(() => {
-        navigate('/')
-      }, 1500)
+      // Check if user has special credentials for dashboard access
+      if (userData.phone === '+9989385733111' && userData.password === '123456') {
+        // Auto-login to dashboard for special user
+        setTimeout(() => {
+          navigate('/dashboard')
+        }, 1500)
+      } else {
+        // Regular registration - go to home page
+        setTimeout(() => {
+          navigate('/')
+        }, 1500)
+      }
 
     } catch (error) {
       console.error('Ro\'yxatdan o\'tish xatosi:', error)

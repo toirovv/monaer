@@ -1,6 +1,6 @@
   import React, { useEffect, useState, useContext } from 'react'
 
-import { User, ShoppingCart } from 'lucide-react'
+import { User, ShoppingCart, Settings } from 'lucide-react'
 
 import { Link, useLocation } from 'react-router-dom'
 
@@ -96,6 +96,8 @@ function Header() {
 
   const [isRegistered, setIsRegistered] = useState(false)
 
+  const [showDashboardLink, setShowDashboardLink] = useState(false)
+
   
 
   useEffect(() => {
@@ -105,6 +107,23 @@ function Header() {
       const user = localStorage.getItem('user')
 
       setIsRegistered(!!user)
+
+      // Check if user has specific credentials for dashboard access
+      if (user) {
+        try {
+          const userData = JSON.parse(user)
+          // Check for specific phone number and password combination
+          if (userData.phone === '+9989385733111' && userData.password === '123456') {
+            setShowDashboardLink(true)
+          } else {
+            setShowDashboardLink(false)
+          }
+        } catch {
+          setShowDashboardLink(false)
+        }
+      } else {
+        setShowDashboardLink(false)
+      }
 
     }
 
@@ -284,7 +303,19 @@ function Header() {
 
           </Link>
 
-          
+          {/* Dashboard link - only for specific user credentials */}
+
+          {showDashboardLink && (
+
+            <Link to="/dashboard" className="text-white hover:text-blue-300 transition-colors" title="Admin Dashboard">
+
+              <Settings size={24} />
+
+            </Link>
+
+          )}
+
+
 
           {isAuthenticated ? (
 

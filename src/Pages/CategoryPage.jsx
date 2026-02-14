@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { products } from './Products'
+import { products as defaultProducts } from './Products'
 import ProductCard from '../Components/ProductCard'
 import { Search, Grid, List } from 'lucide-react'
 
@@ -8,9 +8,52 @@ const CategoryPage = () => {
   const { categoryName } = useParams()
   const [searchTerm, setSearchTerm] = useState('')
   const [viewMode, setViewMode] = useState('grid')
+  const [products, setProducts] = useState([])
+
+  // Load products from all sources
+  const loadProducts = () => {
+    const dashboardProducts = JSON.parse(localStorage.getItem('dashboardProducts') || '[]')
+    const mainProducts = JSON.parse(localStorage.getItem('products') || '[]')
+    const allProducts = JSON.parse(localStorage.getItem('allProducts') || '[]')
+    const productsJsData = JSON.parse(localStorage.getItem('productsJsData') || '[]')
+    
+    // Combine all products: default from Products.js + dashboard added + main platform
+    const combinedProducts = [...defaultProducts]
+    
+    // Add dashboard products (avoid duplicates)
+    dashboardProducts.forEach(product => {
+      if (!combinedProducts.find(p => p.id === product.id)) {
+        combinedProducts.push(product)
+      }
+    })
+    
+    // Add main platform products (avoid duplicates)
+    mainProducts.forEach(product => {
+      if (!combinedProducts.find(p => p.id === product.id)) {
+        combinedProducts.push(product)
+      }
+    })
+    
+    // Add all products storage (avoid duplicates)
+    allProducts.forEach(product => {
+      if (!combinedProducts.find(p => p.id === product.id)) {
+        combinedProducts.push(product)
+      }
+    })
+    
+    // Add productsJsData (avoid duplicates)
+    productsJsData.forEach(product => {
+      if (!combinedProducts.find(p => p.id === product.id)) {
+        combinedProducts.push(product)
+      }
+    })
+    
+    setProducts(combinedProducts)
+  }
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    loadProducts();
   }, [categoryName]);
 
   const categoryProducts = products.filter(product => product.category === categoryName)
@@ -96,9 +139,9 @@ const CategoryPage = () => {
             <p className="text-gray-500">Mahsulotlar topilmadi</p>
           </div>
         ) : (
-          <div className={`grid gap-4 ${
+          <div className={`grid gap-3 sm:gap-4 ${
             viewMode === 'grid' 
-              ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
+              ? 'grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4' 
               : 'grid-cols-1'
           }`}>
             {filteredProducts.map(product => (

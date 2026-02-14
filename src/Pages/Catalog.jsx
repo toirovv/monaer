@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Search, ShoppingBag, SlidersHorizontal, ArrowLeft, ArrowRight } from 'lucide-react'
-import { products } from './Products'
+import { products as defaultProducts } from './Products'
 import ProductCard from '../Components/ProductCard'
 import LoadingSpinner from '../Components/LoadingSpinner'
 import {  useNavigate } from 'react-router-dom'
@@ -15,9 +15,73 @@ function Catalog() {
   const [onlyAvailable, setOnlyAvailable] = useState(false)
   const [isFilterOpen, setIsFilterOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
+  const [products, setProducts] = useState([])
+
+  // Load products from all sources
+  const loadProducts = () => {
+    // First try to load from products.json file (updated by dashboard)
+    const productsFile = JSON.parse(localStorage.getItem('productsFile') || '[]')
+    
+    if (productsFile.length > 0) {
+      // Use products.json if it exists (has dashboard-added products)
+      setProducts(productsFile)
+      return
+    }
+    
+    // Fallback to productsJson
+    const productsJson = JSON.parse(localStorage.getItem('productsJson') || '[]')
+    
+    if (productsJson.length > 0) {
+      // Use productsJson if it exists (has dashboard-added products)
+      setProducts(productsJson)
+      return
+    }
+    
+    // Fallback to other sources
+    const dashboardProducts = JSON.parse(localStorage.getItem('dashboardProducts') || '[]')
+    const mainProducts = JSON.parse(localStorage.getItem('products') || '[]')
+    const allProducts = JSON.parse(localStorage.getItem('allProducts') || '[]')
+    const productsJsData = JSON.parse(localStorage.getItem('productsJsData') || '[]')
+    
+    // Combine all products: default from Products.js + dashboard added + main platform
+    const combinedProducts = [...defaultProducts]
+    
+    // Add dashboard products (avoid duplicates)
+    dashboardProducts.forEach(product => {
+      if (!combinedProducts.find(p => p.id === product.id)) {
+        combinedProducts.push(product)
+      }
+    })
+    
+    // Add main platform products (avoid duplicates)
+    mainProducts.forEach(product => {
+      if (!combinedProducts.find(p => p.id === product.id)) {
+        combinedProducts.push(product)
+      }
+    })
+    
+    // Add all products storage (avoid duplicates)
+    allProducts.forEach(product => {
+      if (!combinedProducts.find(p => p.id === product.id)) {
+        combinedProducts.push(product)
+      }
+    })
+    
+    // Add productsJsData (avoid duplicates)
+    productsJsData.forEach(product => {
+      if (!combinedProducts.find(p => p.id === product.id)) {
+        combinedProducts.push(product)
+      }
+    })
+    
+    setProducts(combinedProducts)
+  }
 
   useEffect(() => {
     window.scrollTo(0, 0)
+    
+    // Load products from all sources
+    loadProducts()
 
     const urlParams = new URLSearchParams(window.location.search)
     const search = urlParams.get('search')
@@ -34,9 +98,16 @@ function Catalog() {
     }
     document.addEventListener('mousedown', handleClickOutside)
 
+    // Listen for product updates from dashboard
+    const handleProductsUpdate = () => {
+      loadProducts()
+    }
+    window.addEventListener('productsUpdated', handleProductsUpdate)
+
     return () => {
       clearTimeout(timer)
       document.removeEventListener('mousedown', handleClickOutside)
+      window.removeEventListener('productsUpdated', handleProductsUpdate)
     }
   }, [isFilterOpen])
 
@@ -178,7 +249,7 @@ function Catalog() {
               <ArrowLeft size={16} />
               <span>Orqaga</span>
             </button>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
               {products
                 .filter((product) => product.category === selectedCategory)
                 .map((product) => (

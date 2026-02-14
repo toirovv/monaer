@@ -8,14 +8,62 @@ import Profile from './Pages/Profile'
 import Catalog from './Pages/Catalog'
 import ProductDetail from './Pages/ProductDetail'
 import Layout from './Components/Layout'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import CategoryPage from './Pages/CategoryPage'
 import Login from './Pages/Login'
 import Register from './Pages/Register'
+import Dashboard from './Pages/Dashboard'
+import DashboardLogin from './Pages/DashboardLogin'
 import NotFound from './Pages/NotFound'
 
 // Auth context
 export const AuthContext = React.createContext()
+
+// Route protection component
+function RequireAuth({ children }) {
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(true)
+  const navigate = useNavigate()
+
+  React.useEffect(() => {
+    const checkAuth = () => {
+      const loggedIn = localStorage.getItem('isLoggedIn')
+      const user = JSON.parse(localStorage.getItem('user') || '{}')
+      
+      // Check for special user credentials (from client login)
+      if (user.phone === '+998938573311' && user.password === '123456') {
+        // Special user - allow access
+        setIsLoggedIn(true)
+        setIsLoading(false)
+        return
+      }
+      
+      // Check for regular admin login
+      if (!loggedIn || user.email !== 'admin@monaer.com') {
+        // Clear invalid session and redirect to home
+        localStorage.removeItem('isLoggedIn')
+        localStorage.removeItem('user')
+        navigate('/')
+        return
+      }
+      
+      setIsLoggedIn(true)
+      setIsLoading(false)
+    }
+
+    checkAuth()
+  }, [navigate])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full"></div>
+      </div>
+    )
+  }
+
+  return isLoggedIn ? children : null
+}
 
 function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false)
@@ -144,6 +192,12 @@ function App() {
           </Route>
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
+          <Route path='/dashboard-login' element={<Home />} />
+          <Route path='/dashboard' element={
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          } />
           <Route path='*' element={<NotFound />} />
         </Routes>
       </BrowserRouter>
